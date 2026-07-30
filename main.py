@@ -36,6 +36,7 @@ def run_playback_and_recording(app, slides):
     try:
         for pos, slide in enumerate(slides):
             app.show_slide(pos)
+            app.show_caption("", "")  # 切换到新一组时先清空上一组残留的字幕
             print(f"[播放] 第 {slide['index']} 组 ({os.path.basename(slide['md_path'])})")
             time.sleep(config.SLIDE_SWITCH_DELAY)
 
@@ -44,10 +45,12 @@ def run_playback_and_recording(app, slides):
                 if voice is None:
                     print(f"  [警告] 未知 speaker '{speaker}',跳过: {text}")
                     continue
+                app.show_caption(speaker, text)  # 先显示这句字幕
                 audio_path = synthesize(voice, text, config.TTS_CACHE_DIR)
                 play_blocking(audio_path)
 
         app.show_done()
+        app.show_caption("", "")  # 结束时清空字幕
         time.sleep(1.5)
     finally:
         recorder.stop()

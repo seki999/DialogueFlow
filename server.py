@@ -66,8 +66,13 @@ def create_app(slides, on_start):
     def show_done():
         socketio.emit("all_done", {})
 
+    def show_caption(speaker, text):
+        # text 为空字符串时表示清空字幕(切换 slide / 全部播完时用)
+        socketio.emit("show_caption", {"speaker": speaker, "text": text})
+
     # 把回调方法挂在 app 上,方便 main.py 里直接调用
     app.show_slide = show_slide
     app.show_done = show_done
+    app.show_caption = show_caption
 
     return app, socketio

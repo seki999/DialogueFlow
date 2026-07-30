@@ -42,6 +42,33 @@
     text-align: center;
     color: #16a34a;
   }
+  #caption {
+    position: fixed;
+    left: 50%;
+    bottom: 48px;
+    transform: translateX(-50%);
+    max-width: 80%;
+    padding: 12px 24px;
+    background: rgba(0, 0, 0, 0.72);
+    font-size: 28px;
+    line-height: 1.5;
+    text-align: center;
+    border-radius: 8px;
+    display: none;
+  }
+  #caption .caption-name {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  #caption.speaker-1 { border-left: 6px solid #f472b6; }
+  #caption.speaker-1 .caption-name { color: #f472b6; }
+  #caption.speaker-1 .caption-text { color: #ffe4ef; }
+
+  #caption.speaker-2 { border-left: 6px solid #60a5fa; }
+  #caption.speaker-2 .caption-name { color: #60a5fa; }
+  #caption.speaker-2 .caption-text { color: #dbeafe; }
 </style>
 </head>
 <body>
@@ -60,6 +87,7 @@
 
 <div id="stage">
   <div id="stage-content"></div>
+  <div id="caption"></div>
 </div>
 
 <script>
@@ -83,11 +111,27 @@
     const content = document.getElementById("stage-content");
     content.innerHTML = data.html;
     renderMermaidIn(content);
+    document.getElementById("caption").style.display = "none";
+  });
+
+  socket.on("show_caption", (data) => {
+    const cap = document.getElementById("caption");
+    if (!data.text) {
+      cap.style.display = "none";
+      return;
+    }
+    const isSpeaker2 = data.speaker === "2";
+    cap.className = isSpeaker2 ? "speaker-2" : "speaker-1";
+    cap.innerHTML =
+      `<span class="caption-name">${isSpeaker2 ? "说话人 2" : "说话人 1"}</span>` +
+      `<span class="caption-text">${data.text}</span>`;
+    cap.style.display = "block";
   });
 
   socket.on("all_done", () => {
     const content = document.getElementById("stage-content");
     content.innerHTML = '<div id="done-banner">播放完毕</div>';
+    document.getElementById("caption").style.display = "none";
   });
 </script>
 
