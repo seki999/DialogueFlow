@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>教学视频自动播放</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<style>
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    margin: 0;
+    background: #ffffff;
+    color: #1f2937;
+  }
+  #overview { padding: 24px 40px; }
+  #overview h2 { margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 16px; }
+  #stage {
+    display: none;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: 48px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  #stage.active { display: flex; }
+  #stage-content { width: 100%; }
+  #start-btn {
+    font-size: 20px;
+    padding: 12px 28px;
+    cursor: pointer;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+  }
+  #start-btn:hover { background: #1d4ed8; }
+  #status { margin-top: 16px; color: #555; }
+  .mermaid { text-align: center; }
+  #done-banner {
+    font-size: 32px;
+    text-align: center;
+    color: #16a34a;
+  }
+</style>
+</head>
+<body>
+
+<div id="overview">
+  <h1>素材一览(共 {{ slides_preview|length }} 组)</h1>
+  <p>确认下面内容无误后,请把浏览器窗口<strong>最大化 / 按 F11 全屏</strong>,再点击"开始录制"。</p>
+  <button id="start-btn">开始录制</button>
+  <div id="status"></div>
+
+  {% for slide in slides_preview %}
+    <h2>第 {{ slide.index }} 组</h2>
+    <div>{{ slide.html | safe }}</div>
+  {% endfor %}
+</div>
+
+<div id="stage">
+  <div id="stage-content"></div>
+</div>
+
+<script>
+  mermaid.initialize({ startOnLoad: false, theme: "default" });
+  const socket = io();
+
+  function renderMermaidIn(el) {
+    mermaid.run({ nodes: el.querySelectorAll(".mermaid") });
+  }
+
+  document.getElementById("start-btn").addEventListener("click", () => {
+    document.getElementById("status").innerText = "已开始录制,请勿关闭本窗口或切换到其他窗口...";
+    document.getElementById("start-btn").disabled = true;
+    fetch("/api/start", { method: "POST" });
+  });
+
+  socket.on("show_slide", (data) => {
+    document.getElementById("overview").style.display = "none";
+    const stage = document.getElementById("stage");
+    stage.classList.add("active");
+    const content = document.getElementById("stage-content");
+    content.innerHTML = data.html;
+    renderMermaidIn(content);
+  });
+
+  socket.on("all_done", () => {
+    const content = document.getElementById("stage-content");
+    content.innerHTML = '<div id="done-banner">播放完毕</div>';
+  });
+</script>
+
+</body>
+</html>
