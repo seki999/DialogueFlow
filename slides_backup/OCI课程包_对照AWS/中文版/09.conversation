@@ -1,0 +1,14 @@
+speaker 1: GPU 和 HPC 这块,是不是就是拼谁的显卡多?
+speaker 2: 显卡数量是一方面,但更关键的是节点之间怎么通信,尤其是做大规模分布式训练的时候。
+speaker 1: 为什么通信这么重要?
+speaker 2: 因为训练大模型的时候,各个GPU节点要频繁交换梯度数据,如果节点间网络延迟高,GPU再多也会被网络拖后腿。
+speaker 1: AWS 那边是怎么解决这个问题的?
+speaker 2: AWS 用 EFA 这种弹性网卡技术,配合 P 系列、G 系列 GPU 实例,组成 UltraCluster,追求节点间低延迟互联。
+speaker 1: OCI 这边呢?
+speaker 2: OCI 主推的是基于 RDMA 网络互联的裸金属 GPU 集群,常见配置是 H100、H200 甚至 B200 这类高端卡。
+speaker 1: RDMA 跟 EFA 是类似的东西吗?
+speaker 2: 目标类似,都是为了让GPU之间跳过传统网络协议栈的开销,直接进行内存到内存的高速数据传输。
+speaker 1: HPC 集群管理工具方面呢,AWS 有 ParallelCluster。
+speaker 2: 对,这个功能定位在 OCI 里对应的是它自己的HPC集群管理方案,思路是一样的:帮你自动化搭建和调度计算节点。
+speaker 1: 所以选型的时候不能只看单卡参数?
+speaker 2: 对,一定要连着集群网络架构一起评估,不然实际训练效率可能跟单卡跑分完全不成正比。

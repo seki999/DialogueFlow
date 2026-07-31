@@ -1,0 +1,14 @@
+speaker 1: Functions 这个是不是就是 OCI 版的 Lambda?
+speaker 2: 对,定位完全一致,事件驱动、按调用付费,不用自己管服务器。
+speaker 1: 底层是自研的还是基于什么开源项目?
+speaker 2: 基于开源的 Fn Project 构建,这一点跟 Lambda 完全闭源不太一样。
+speaker 1: 开源意味着什么,可移植性更好吗?
+speaker 2: 理论上是的,Fn Project 本身可以在其他环境部署,不完全锁定在 OCI 里,但实际迁移还是要看你用了多少 OCI 专属的触发器和权限配置。
+speaker 1: 触发源这块跟 Lambda 类似吗?
+speaker 2: 类似,常见的有 API Gateway 触发、Events 服务触发、Streaming 流数据触发,基本对应 Lambda 的 API Gateway、EventBridge、Kinesis 触发器。
+speaker 1: 那计费模式呢?
+speaker 2: 按调用次数和执行时长收费,这跟 Lambda 是一样的计费逻辑。
+speaker 1: 冷启动这个问题在 Functions 上也存在吗?
+speaker 2: 存在,serverless 函数计算普遍都有冷启动问题,优化思路跟 Lambda 类似,比如控制包体积、复用连接池。
+speaker 1: 那如果我已经写好了 Lambda 函数,迁移到 Functions 麻烦吗?
+speaker 2: 业务逻辑代码基本不用改,主要是触发器绑定和权限配置需要按 OCI 的方式重新配一遍。

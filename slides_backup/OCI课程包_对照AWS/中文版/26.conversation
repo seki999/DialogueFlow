@@ -1,0 +1,14 @@
+speaker 1: 身份和权限管理这块,概念上跟AWS IAM完全一样吗?
+speaker 2: 结构类似,但组织方式不一样,这也是我们前面提到过的差异最大的地方之一。
+speaker 1: 具体差在哪?
+speaker 2: AWS通常用多个账号加Organizations来做隔离,比如生产账号、测试账号分开;OCI是在单个租户里,用一个叫Compartment的概念做树状结构隔离。
+speaker 1: Compartment大概相当于什么?
+speaker 2: 你可以类比成"用多个AWS账号加Organizations实现的隔离效果",但OCI不需要拆分成多个物理账号,而是在一个租户内部划分出多个逻辑隔间。
+speaker 1: 那策略怎么写,也是JSON吗?
+speaker 2: 不是,OCI的Policy语句更接近自然语言,比如"Allow group Admins to manage all-resources in tenancy"这种句式。
+speaker 1: 这样是不是比AWS IAM的JSON策略文档更容易读懂?
+speaker 2: 对,可读性确实更好,一眼就能看出"谁对什么资源有什么权限"。
+speaker 1: 那是不是意味着OCI的权限管理比AWS IAM更简单、更好用?
+speaker 2: 简单场景下确实更直观,但复杂精细化的权限控制场景,AWS IAM策略语言的灵活度更高,这是一个需要权衡的地方,不是绝对的谁更好。
+speaker 1: 那如果我要从AWS多账号架构迁移过来,大概的映射思路是什么?
+speaker 2: 大致是把每个AWS账号映射成一个Compartment,原来账号级别的隔离逻辑,变成Compartment树状结构里的一层。

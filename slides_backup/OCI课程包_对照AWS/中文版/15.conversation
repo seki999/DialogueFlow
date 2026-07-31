@@ -1,0 +1,10 @@
+speaker 1: Block Volumes 应该就是挂盘用的吧,跟EBS一样?
+speaker 2: 对,概念完全一样,挂载在计算实例上,作为独立于实例生命周期的持久化存储。
+speaker 1: 扩容方不方便,EBS现在可以在线扩容不用停机。
+speaker 2: Block Volumes也支持在线扩容,操作体验跟EBS差不多。
+speaker 1: 性能分级呢,EBS有gp3、io2这些档位。
+speaker 2: OCI这边也有类似的性能层级选择,逻辑上对应通用型和高性能型,具体档位名字不同,但选择思路是一样的:普通业务用通用档,数据库这种IOPS敏感的用高性能档。
+speaker 1: 那典型用途跟EBS是不是也差不多,比如数据库数据盘?
+speaker 2: 对,数据库数据盘、需要持久化的应用数据目录,这些场景都是Block Volumes的主要用途,跟EBS的定位完全一致。
+speaker 1: 那跟Object Storage的选择逻辑是什么,什么时候用哪个?
+speaker 2: 简单说:需要挂在单台实例上、当文件系统用的选Block Volumes;不需要挂载、通过API访问、多方共享的用Object Storage,这个判断标准跟EBS/S3的选择逻辑是一样的。

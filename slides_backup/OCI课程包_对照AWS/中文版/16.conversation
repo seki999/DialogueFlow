@@ -1,0 +1,10 @@
+speaker 1: File Storage 跟前面的 Block Volumes 有什么本质区别?
+speaker 2: 最核心的区别是能不能被多台实例同时挂载。Block Volumes一般是单实例独占用的,File Storage天生就是给多实例共享设计的。
+speaker 1: 这个逻辑跟EFS对Block Volumes/EBS的区别是一样的。
+speaker 2: 完全一样,File Storage基于NFS协议,用法和EFS基本对应。
+speaker 1: 那什么场景我会需要多个实例共享同一份文件?
+speaker 2: 比如一组Web服务器都需要访问同一批上传的媒体文件,或者一个内容管理系统需要多台后端实例共享文件目录。
+speaker 1: 性能和扩容方面呢?
+speaker 2: 也是按需自动扩展容量,不需要像Block Volumes那样提前规划好固定大小,这一点跟EFS的弹性扩展思路一致。
+speaker 1: 那如果我在OKE里跑Pod,想要多个Pod共享存储,是不是也是用File Storage?
+speaker 2: 对,这种场景下File Storage通常是Kubernetes里配置共享型PersistentVolume的首选,跟EKS里用EFS作为共享存储是同一个思路。

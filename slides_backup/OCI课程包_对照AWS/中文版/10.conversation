@@ -1,0 +1,12 @@
+speaker 1: OKE 这个名字听着就很像 EKS 的翻版。
+speaker 2: 结构上确实高度一致,都是"托管 Control Plane + 你自己管理或者也托管的 Node Pool"。
+speaker 1: EKS 的 Control Plane 是要收费的,OKE 呢?
+speaker 2: OKE 目前是控制平面免费,不过定价政策会变,具体以官方最新页面为准。
+speaker 1: 那 Node Pool 这块能用的机型跟前面讲的计算服务是通的吗?
+speaker 2: 对,Node Pool 里可以选普通VM、裸金属,甚至Arm节点或者GPU节点,跟我们前面几章讲的计算服务是同一套底层资源。
+speaker 1: 那如果我已经有一堆 Kubernetes YAML 文件,迁移过去要改很多吗?
+speaker 2: 应用层面的 YAML 基本不用大改,毕竟都是标准 Kubernetes API;主要要改的是跟云资源相关的部分,比如存储类、负载均衡的注解、网络配置。
+speaker 1: 存储类是不是就对应我们后面要讲的 Object/Block Storage?
+speaker 2: 对,后面存储类章节讲完你就知道怎么配置 PersistentVolume 了。
+speaker 1: 那网络这块呢?
+speaker 2: 网络涉及到 VCN,这个我们放在网络类章节详细讲,概念上跟 AWS VPC 基本对等。

@@ -1,0 +1,10 @@
+speaker 1: 网络这块我在AWS上算是比较熟的,VPC、子网、路由表这套。
+speaker 2: 那你会发现OCI这边基本是同一套逻辑,核心是VCN,对应VPC。
+speaker 1: Load Balancer 和 FastConnect 呢?
+speaker 2: Load Balancer对应ELB,也就是ALB/NLB这类;FastConnect对应Direct Connect,都是专线接入数据中心的服务。
+speaker 1: 那学习这块的时候,是不是可以基本照搬AWS网络设计的思路?
+speaker 2: 思路基本可以照搬,但有几个细节不一样,比如安全组的实现方式、可用域的划分方式,这些我们后面章节会专门讲。
+speaker 1: 为什么网络类要放在计算和存储之后讲,而不是最先讲?
+speaker 2: 因为VCN虽然是基础设施,但理解它的价值要结合"计算实例要跑在里面""数据库要用它做私有访问"这些场景才更直观,所以我们放在这里讲,方便你把前面学的东西串起来。
+speaker 1: 那我们先从VCN本身开始?
+speaker 2: 对,下一章直接对照VPC讲VCN的核心概念。

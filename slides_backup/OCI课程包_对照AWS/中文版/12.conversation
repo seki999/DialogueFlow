@@ -1,0 +1,10 @@
+speaker 1: Container Instances 跟前面讲的 OKE 有什么区别,都是跑容器啊。
+speaker 2: 区别在于复杂度。OKE 是完整的 Kubernetes 集群,适合多容器、多服务的复杂编排;Container Instances 是"我就想跑一个容器",不需要集群的概念。
+speaker 1: 那这个对应 AWS 的什么服务?
+speaker 2: 对应 Fargate,准确说是 Fargate 里"直接跑任务"这种用法,不涉及 ECS/EKS 集群管理。
+speaker 1: 什么场景适合用这种服务?
+speaker 2: 典型场景是批处理作业、定时任务、或者一个很轻量的API服务,专门为这个起一整套 Kubernetes 集群不划算。
+speaker 1: 计费是怎么算的?
+speaker 2: 按容器实际用到的CPU、内存资源和运行时长计费,跟 Fargate 的按需计费逻辑一致。
+speaker 1: 那如果我的服务后来变复杂了,需要多容器协同,是不是就要迁移到 OKE?
+speaker 2: 对,这是一个很自然的演进路径:简单场景用 Container Instances,复杂到需要服务发现、自动扩缩容编排的时候再上 OKE,AWS 那边从 Fargate 单任务到 EKS 也是同样的演进逻辑。

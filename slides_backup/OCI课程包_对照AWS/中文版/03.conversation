@@ -1,0 +1,14 @@
+speaker 1: 图里看到 OCI 拆成了五大类,这个分类是 Oracle 官方的分法吗?
+speaker 2: 官网上服务列表更细,我们是按照最常用、最容易和 AWS 对照的思路,归纳成了计算、存储、网络、数据库、安全这五大类。
+speaker 1: 这五类刚好也是我在 AWS 架构里天天用到的模块。
+speaker 2: 对,所以你会发现每一类里面几乎都能找到一个 AWS 老朋友。
+speaker 1: 具体每一类里面都包含哪些服务?
+speaker 2: 计算类包括 Compute、裸金属、GPU/HPC、OKE、Functions、Container Instances;存储类是 Object、Block、File、Archive 四种存储。
+speaker 1: 那网络和数据库呢?
+speaker 2: 网络类核心是 VCN、Load Balancer、FastConnect;数据库类我们重点讲 Autonomous Database 和 HeatWave MySQL,这也是 Oracle 最想让你记住的两个服务。
+speaker 1: 安全类呢,听起来比较抽象。
+speaker 2: 安全类我们聚焦在 IAM 和 Compartment 这两个概念上,因为这是跟 AWS IAM 差异最大的地方。
+speaker 1: 那我们学习的顺序是按这五类平铺讲,还是有先后逻辑?
+speaker 2: 有逻辑,我们按实际搭建一个架构的顺序来,先计算,再存储,再网络,再数据库,最后安全收尾。
+speaker 1: 挺合理的,跟实际项目里先起服务器再连存储和网络的顺序差不多。
+speaker 2: 对,这样你学完就能直接照着搭一遍试试。

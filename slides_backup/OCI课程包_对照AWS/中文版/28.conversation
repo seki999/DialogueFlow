@@ -1,0 +1,16 @@
+speaker 1: 这门课讲完了,能帮我把整体脉络串一遍吗?
+speaker 2: 可以,你看这张总览图,我们从计算类讲起,一路讲了存储、网络、数据库、安全五大类,一共15个服务。
+speaker 1: 计算类里印象最深的是什么?
+speaker 2: 应该是OCPU和vCPU的换算陷阱,这个不注意的话,后面所有成本对比都会算错。
+speaker 1: 存储类呢?
+speaker 2: 存储类概念上跟AWS对应度最高,四个服务基本一一对应,唯一要记住的差异点是出站流量费用普遍更低。
+speaker 1: 网络和数据库呢?
+speaker 2: 网络类核心是VCN,跟VPC几乎一样,唯一要注意安全列表和NSG可以叠加使用;数据库类是OCI投入最深的领域,Autonomous Database和HeatWave MySQL都体现了"减少运维负担、简化架构"这个思路。
+speaker 1: 安全类那部分呢,Compartment和IAM的差异我记得挺清楚。
+speaker 2: 对,这是我们讲过差异最大的一块,Compartment用树状结构在单租户内做隔离,Policy语句更接近自然语言。
+speaker 1: 那有没有什么常见误区是需要反复提醒的?
+speaker 2: 有三个:第一,OCPU不等于vCPU,记得换算;第二,可用域数量因区域而异,不能照搬AWS多AZ假设;第三,免费套餐是很好的练手环境,别忘了利用起来。
+speaker 1: 那学完这些之后,还有什么值得继续研究的方向?
+speaker 2: 可以往两个方向延伸,一是多云互联,比如Oracle Database直接跑在Azure或者Google Cloud上这种混合部署;二是Dedicated Region这种把整套OCI服务部署进自己数据中心的高级形态。
+speaker 1: 挺好的,这些应该是我下一步深入的方向。
+speaker 2: 对,这门课给你的是一张地图,具体到每个服务的深水区,还是要动手实际操作才能真正掌握。

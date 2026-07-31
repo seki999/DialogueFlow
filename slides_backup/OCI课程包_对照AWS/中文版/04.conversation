@@ -1,0 +1,12 @@
+speaker 1: 计算类一下子有五六个服务,感觉信息量有点大,能先给我一个全景图吗?
+speaker 2: 可以,你看这张图,左边是 OCI 的计算家族,右边是对应的 AWS 服务,一一连线。
+speaker 1: Compute VM 对 EC2,这个我懂;GPU/HPC 对 EC2 GPU 加 ParallelCluster,这个是什么意思?
+speaker 2: ParallelCluster 是 AWS 专门用来管理高性能计算集群的工具,OCI 那边对应的是它自己的裸金属 GPU 集群方案。
+speaker 1: OKE 对 EKS,这个应该没有争议,都是托管 Kubernetes。
+speaker 2: 对,这个基本是一比一对应。
+speaker 1: Functions 对 Lambda,Container Instances 对 Fargate,这两个我平时也在用。
+speaker 2: 没错,而且用法的思路都差不多:Functions 是写函数、按调用付费;Container Instances 是直接跑容器、不用管虚拟机。
+speaker 1: 那这几个服务的学习顺序是怎样的?
+speaker 2: 我们接下来会先讲 VM 本身,然后专门用一章讲计费单位的坑,再讲裸金属、Arm、GPU/HPC,最后讲 OKE、Functions、Container Instances。
+speaker 1: 为什么计费单位要单独拿出来一章?
+speaker 2: 因为这是最容易让 AWS 背景的人算错成本的地方,值得单独讲清楚。

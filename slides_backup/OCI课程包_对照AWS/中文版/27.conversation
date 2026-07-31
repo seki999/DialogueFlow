@@ -1,0 +1,14 @@
+speaker 1: 之前提到过可用域这块跟AWS不太一样,能具体讲讲吗?
+speaker 2: 可以。AWS一个Region下通常有多个AZ,你做高可用架构默认就是"跨AZ部署";OCI的Region下划分的是Availability Domain,简称AD。
+speaker 1: AD跟AZ是一回事吗?
+speaker 2: 概念上类似,但有个坑:不是所有OCI区域都有多个AD,有些区域只有1个AD。
+speaker 1: 那如果只有1个AD,怎么做容错?
+speaker 2: 这种情况下,OCI用Fault Domain在同一个AD内部再做一层容错隔离,相当于"同城不同机房"的思路,但没有真正跨AD的物理隔离。
+speaker 1: 所以如果我照搬AWS"跨AZ部署"的架构假设,直接套到OCI上会有问题?
+speaker 2: 对,一定要先查清楚你要用的目标区域到底有几个AD,再决定高可用架构怎么设计,不能想当然。
+speaker 1: 明白了,这是个容易被忽略的细节。那免费套餐这块呢,值得说说吗?
+speaker 2: 值得,OCI的Always Free套餐力度不小,包括2个Autonomous Database实例、一定量的Arm计算和存储,而且是长期免费,不是试用期。
+speaker 1: 这个适合用来做什么?
+speaker 2: 很适合拿来做本课程里讲的这些服务的实操练习,或者迁移一个小系统练手,不用担心产生费用。
+speaker 1: 那学完这门课之后,是不是可以直接去免费套餐里把讲过的服务都试一遍?
+speaker 2: 对,这是最推荐的学习方式,光看不动手很容易忘,免费套餐正好给了一个零成本的练习场。

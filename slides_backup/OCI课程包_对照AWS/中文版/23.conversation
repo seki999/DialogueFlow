@@ -1,0 +1,10 @@
+speaker 1: 数据库这块我猜是重头戏,毕竟Oracle是数据库起家的。
+speaker 2: 没错,这是OCI跟AWS相比投入最深、也最有差异化的一类服务。
+speaker 1: 具体聚焦哪几个服务?
+speaker 2: 我们重点讲两个:Autonomous Database和HeatWave MySQL,这也是Oracle自己最想让大家记住的两个招牌产品。
+speaker 1: Autonomous Database听名字应该是自动化程度很高的数据库?
+speaker 2: 对,"自治"就是它的核心卖点,自动打补丁、自动调优、自动备份,这个我们下一章详细讲,会跟RDS和Aurora做对比。
+speaker 1: HeatWave MySQL呢?
+speaker 2: 这是全托管MySQL,但内置了一个内存查询加速引擎,可以在同一个实例里既做事务处理又做分析查询,这个我们放在再下一章讲,会跟Aurora MySQL加Redshift的组合做对比。
+speaker 1: 听起来这两个服务都想解决"传统架构里要拆多套系统"的问题?
+speaker 2: 对,这是理解OCI数据库服务的一个关键线索,记住这个思路,后面两章会更容易理解。

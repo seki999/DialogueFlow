@@ -1,0 +1,12 @@
+speaker 1: Autonomous Database跟我熟悉的RDS比,核心差异是什么?
+speaker 2: 你可以这样理解:RDS是"帮你托管数据库,但你还是要自己调参数、做优化";Aurora Serverless是"帮你自动扩缩容";Autonomous Database相当于把这两个能力合在了一起。
+speaker 1: 具体自动化体现在哪些方面?
+speaker 2: 自动打补丁、自动调优、自动备份、自动扩缩容,这些原本需要DBA盯着做的事情,都由服务自己完成。
+speaker 1: 那是不是意味着我完全不需要DBA了?
+speaker 2: 也不是完全不需要,业务层面的schema设计、慢查询排查这些还是需要人来看,但日常运维和基础调优的负担大幅减少了。
+speaker 1: 前面提到它专门针对Oracle Database引擎优化,这跟我在AWS上用RDS for Oracle有什么不同?
+speaker 2: RDS for Oracle本质是把Oracle Database托管在AWS基础设施上,优化程度有限;Autonomous Database是Oracle自己在自己的基础设施上做端到端优化,如果你的技术栈本来就是Oracle Database,这个服务的价值会明显更高。
+speaker 1: ATP和ADW这两个模式是什么意思?
+speaker 2: ATP是面向事务处理(OLTP)的模式,ADW是面向数据仓库分析(OLAP)的模式,你可以按业务需求选择对应的模式,底层引擎是同一个。
+speaker 1: 那什么样的团队最适合用这个服务?
+speaker 2: 不想投入大量DBA人力做日常运维调优、又需要Oracle Database能力的团队,是这个服务最直接的目标用户。

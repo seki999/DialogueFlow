@@ -1,0 +1,12 @@
+speaker 1: Arm 计算这个概念我在 AWS 上遇到过,就是 Graviton 对吧?
+speaker 2: 对,思路完全一样,都是用 Arm 架构的芯片去换取更好的性价比。
+speaker 1: OCI 这边也有专门的 Arm 计算产品线吗?
+speaker 2: 有,OCI 的 Arm 计算是基于 Ampere 的芯片,定位跟 Graviton 类似。
+speaker 1: 那用起来跟普通 x86 虚拟机有什么区别?
+speaker 2: 使用方式上区别不大,主要是底层芯片架构不同,你需要确认自己的软件、依赖库是不是支持 Arm。
+speaker 1: 这跟我们当年把服务迁移到 Graviton 时遇到的问题是一样的。
+speaker 2: 对,基本是同一套迁移经验可以直接搬过来用。
+speaker 1: 那有没有什么好处是 Arm 计算特有的?
+speaker 2: 一个实用的点是,OCI 的 Always Free 套餐里通常包含一定额度的 Arm 计算资源,可以白嫖用来练手。
+speaker 1: 挺适合拿来做个人项目或者练习环境的。
+speaker 2: 对,如果你想先摸一遍 OCI 而不想花钱,Arm 计算是一个不错的起点。

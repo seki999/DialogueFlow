@@ -1,0 +1,10 @@
+speaker 1: 存储这块听起来应该是最好对照的,毕竟概念都差不多。
+speaker 2: 确实,四个服务基本可以一一对上:Object Storage对S3,Block Volumes对EBS,File Storage对EFS,Archive Storage对Glacier。
+speaker 1: 那这四个里面,哪个是用得最多的?
+speaker 2: 跟AWS一样,Object Storage(对应S3)通常是用得最广的,因为它便宜、可以直接当静态资源托管,也能给应用做数据湖底座。
+speaker 1: OCI在存储这块有没有什么特别强调的差异点?
+speaker 2: 有,官方经常拿出来讲的是出站流量费用,也就是数据从云里传出去的费用,官方口径是比主流云厂商低不少。
+speaker 1: 这个对什么样的业务影响最大?
+speaker 2: 比如CDN回源、大量视频/文件下载、跨云数据同步这类场景,出站流量费用是个不小的成本项,这时候OCI的优势就比较明显。
+speaker 1: 那接下来是不是按图上的顺序,一个一个讲这四个存储服务?
+speaker 2: 对,我们先从最常用的Object Storage开始。
