@@ -1,0 +1,10 @@
+speaker 1: Is the regular "ping" we usually talk about the same as TCP Ping?
+speaker 2: Not quite. The regular ping uses ICMP, while TCP Ping tries to establish a TCP connection to a specific port.
+speaker 1: So how exactly does it determine whether a port is usable?
+speaker 2: It performs a standard three way handshake. It sends a SYN, and if the target responds with SYN-ACK and it replies with ACK, the handshake succeeds, meaning the port is reachable.
+speaker 1: If ICMP Ping fails, does that mean TCP Ping will fail too?
+speaker 2: Not necessarily. Many servers block ICMP for security reasons, but the web service port they expose might still be open and working fine.
+speaker 1: So TCP Ping actually reflects whether the service is really usable more accurately.
+speaker 2: Right. Checking whether port 443 can be reached is more meaningful in practice than checking whether the host responds to a regular ping.
+speaker 1: Can TCP Ping tell us the specific reason a port isn't reachable?
+speaker 2: No, it only tells you whether the attempt succeeded or timed out. Finding the specific cause requires combining it with other monitoring methods.

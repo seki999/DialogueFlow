@@ -1,0 +1,10 @@
+speaker 1: When we talk about monitoring network devices, is it enough to just install one tool?
+speaker 2: Not really. In real production environments, you usually need to combine four communication methods to fully understand a device's state.
+speaker 1: Which four methods are those?
+speaker 2: TCP Ping, SNMP GET, SNMP Trap, and Syslog.
+speaker 1: What does each one do?
+speaker 2: Simply put, TCP Ping tells you if you can connect, SNMP GET tells you the current state, SNMP Trap tells you what just happened, and Syslog tells you the specific reason.
+speaker 1: So could you get a general picture using just one of them?
+speaker 2: You could get part of the picture, but you would have blind spots. If you only use Ping, you know the device is online, but you have no idea whether the CPU is close to maxed out.
+speaker 1: I see, so they don't replace each other, they divide the work.
+speaker 2: Exactly. That's what we'll go through one by one in the following chapters.

@@ -1,0 +1,10 @@
+speaker 1: 平时说的 Ping 是不是就是 TCP Ping？
+speaker 2: 不完全一样。我们常说的普通 Ping 用的是 ICMP，而 TCP Ping 是尝试对某个具体端口建立 TCP 连接。
+speaker 1: 那它具体怎么判断端口是否可用？
+speaker 2: 它会发起标准的三次握手，先发 SYN，如果对方返回 SYN-ACK，再回复 ACK，握手成功就说明端口可以连接。
+speaker 1: 如果 ICMP Ping 不通，是不是 TCP Ping 也一定不通？
+speaker 2: 不一定。很多服务器出于安全考虑会禁止 ICMP，但对外提供的 Web 服务端口仍然正常开放。
+speaker 1: 也就是说 TCP Ping 更能反映业务是否真的可用。
+speaker 2: 对，比如检查 443 端口能不能连，比检查主机能不能被 Ping 通更有实际意义。
+speaker 1: 那 TCP Ping 能告诉我们端口不通的具体原因吗？
+speaker 2: 不能，它只能告诉你结果是成功还是超时，具体原因需要结合其他监控手段。

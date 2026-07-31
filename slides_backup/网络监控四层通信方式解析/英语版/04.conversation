@@ -1,0 +1,12 @@
+speaker 1: Is SNMP Trap the same thing as SNMP GET, which we covered earlier?
+speaker 2: The direction is completely opposite. GET is the monitoring server actively asking, while Trap is the device actively reporting, the server doesn't need to ask first.
+speaker 1: So under what circumstances does a device send a trap?
+speaker 2: Typical cases include an interface suddenly going down, a power failure, temperature crossing a threshold, or the device having just restarted.
+speaker 1: Which port does it use?
+speaker 2: UDP port 162, dedicated to receiving traps.
+speaker 1: Is it possible for a trap to not arrive?
+speaker 2: Yes. Traditional traps run over UDP with no acknowledgment mechanism, so they can be lost if the network is unstable.
+speaker 1: Is there a more reliable option?
+speaker 2: There is. SNMP has a notification type called Inform, where the receiver has to send back an acknowledgment, making it more reliable than a regular trap.
+speaker 1: So the main advantage of Trap is that it's timely?
+speaker 2: Right. It doesn't have to wait for the next polling cycle, so it can catch problems immediately, but you still need SNMP GET to confirm the actual state.

@@ -1,0 +1,12 @@
+speaker 1: Syslog 和前面讲的 Trap 是不是重复的功能？
+speaker 2: 不是。Trap 更像是简短的结构化告警，而 Syslog 是详细的事件日志，内容要丰富得多。
+speaker 1: 能举个例子说明区别吗？
+speaker 2: 可以，Trap 可能只告诉你接口 down 了，而 Syslog 会具体写明接口是因为信号丢失才断开的。
+speaker 1: Syslog 一般用什么端口传输？
+speaker 2: 常见的是 UDP 514 和 TCP 514，如果需要加密传输，会使用 TLS 的 6514 端口。
+speaker 1: UDP 和 TCP 传输有什么区别？
+speaker 2: UDP 速度快，但不保证日志一定送达，TCP 或 TLS 可靠性和安全性更高，但开销也更大一些。
+speaker 1: Syslog 通常记录哪些内容？
+speaker 2: 常见的有接口状态变化、配置修改记录、用户登录事件，还有系统重启等信息。
+speaker 1: 听起来它更适合事后排查原因？
+speaker 2: 对，Trap 负责第一时间告诉你出事了，Syslog 负责告诉你具体发生了什么，两者配合使用效果最好。

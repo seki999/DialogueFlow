@@ -1,0 +1,10 @@
+speaker 1: 我们平时说监控网络设备，是不是装一个工具就够了？
+speaker 2: 不够。实际生产环境里通常要组合四种通信方式，才能全面掌握设备状态。
+speaker 1: 具体是哪四种？
+speaker 2: TCP Ping、SNMP GET、SNMP Trap，还有 Syslog。
+speaker 1: 它们分别负责什么？
+speaker 2: 简单说，TCP Ping 回答能不能连上，SNMP GET 回答现在状态怎样，SNMP Trap 回答刚才突然发生了什么，Syslog 回答具体原因是什么。
+speaker 1: 那是不是只用其中一个也可以大致了解设备情况？
+speaker 2: 可以了解一部分，但会有盲区。比如只用 Ping，你知道设备在线，但不知道 CPU 是不是快满了。
+speaker 1: 明白了，所以它们不是互相替代，而是分工合作。
+speaker 2: 对，这也是接下来几章要分别讲解的内容。

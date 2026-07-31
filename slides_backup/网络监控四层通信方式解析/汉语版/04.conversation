@@ -1,0 +1,12 @@
+speaker 1: SNMP Trap 和前面讲的 SNMP GET 是同一回事吗？
+speaker 2: 方向完全相反。GET 是监控服务器主动去问，Trap 是设备主动上报，不需要服务器先发起请求。
+speaker 1: 那设备一般在什么情况下会发 Trap？
+speaker 2: 比如接口突然断开、电源出现故障、温度超过阈值，或者设备刚刚重启，这些都是典型场景。
+speaker 1: 用的是什么端口？
+speaker 2: UDP 162 端口，专门用于接收 Trap。
+speaker 1: Trap 会不会有可能收不到？
+speaker 2: 有可能，传统 Trap 基于 UDP，没有确认机制，如果网络抖动可能会丢失。
+speaker 1: 那有没有更可靠的方式？
+speaker 2: 有，SNMP 里还有一种叫 Inform 的通知方式，接收方需要返回确认，可靠性比普通 Trap 更高。
+speaker 1: 所以 Trap 的优势主要是及时性？
+speaker 2: 对，它不用等下一次轮询周期，能第一时间发现问题，但具体状态还是需要配合 SNMP GET 确认。

@@ -1,0 +1,12 @@
+speaker 1: How exactly does SNMP GET work?
+speaker 2: The monitoring server initiates the query itself, sending a GET request to the device's SNMP Agent over UDP port 161.
+speaker 1: How does the server know which metric to ask for?
+speaker 2: Each metric corresponds to a number called an OID. For example, one specific OID represents the device's uptime.
+speaker 1: What kind of things can it query?
+speaker 2: Common ones include CPU usage, memory usage, interface traffic, interface status, plus the device model and how long it has been running.
+speaker 1: Does this mean it has to keep asking over and over?
+speaker 2: Yes, it's a polling model. The monitoring system repeats the GET request on a fixed interval.
+speaker 1: Is a higher polling frequency always better?
+speaker 2: No. Polling too often adds load to the device and the network, so you should set a reasonable interval based on how important each metric is.
+speaker 1: Are there differences between the versions?
+speaker 2: SNMPv1 and v2c are relatively simple but weaker on security, while SNMPv3 supports authentication and encryption, which is usually recommended for production environments.
