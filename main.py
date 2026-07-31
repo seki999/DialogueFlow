@@ -25,6 +25,7 @@ def run_playback_and_recording(app, slides, lang):
         output_path=output_path,
         audio_device=config.FFMPEG_AUDIO_DEVICE,
         framerate=config.FFMPEG_FRAMERATE,
+        avfoundation_device=config.FFMPEG_AVFOUNDATION_DEVICE,
     )
 
     voice_map = config.VOICE_MAP[lang]

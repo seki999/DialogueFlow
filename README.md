@@ -1,4 +1,4 @@
-# 本地教学视频自动生成工具(Windows)
+# 本地教学视频自动生成工具(Windows / macOS)
 
 自动依次展示 `NN.md`(流程图)并播放 `NN.conversation`(双人对话语音),
 全程录屏生成教学视频。
@@ -22,12 +22,15 @@ video_maker/
 
 ## 快速开始(如果不想手动敲命令)
 
-项目里附带了两个一键脚本(双击即可运行):
+项目里附带了一键脚本:
 
-- `setup.bat` —— 第一次使用时运行一次,自动创建虚拟环境 `venv` 并安装依赖
-- `run.bat` —— 之后每次运行项目,双击这个就行,会自动激活虚拟环境并启动 `main.py`
+- Windows:双击 `setup.bat`(第一次用时运行一次,创建虚拟环境并装依赖),
+  之后双击 `run.bat` 启动
+- macOS / Linux:终端里执行 `./setup.sh`(第一次用时运行一次),
+  之后执行 `./run.sh` 启动(如果提示权限不足,先执行一次
+  `chmod +x setup.sh run.sh`)
 
-用了这两个脚本可以跳过下面"第一步"里的手动命令部分,直接看"第二步:确认可以录到系统声音"。
+用了这两组脚本可以跳过下面"第一步"里的手动命令部分,直接看"第二步:确认可以录到系统声音"。
 
 ## 第一步:安装依赖
 
@@ -44,21 +47,26 @@ python -m venv venv
 
 **每次运行本项目前,都要先激活这个环境**:
 
-cmd:
+cmd(Windows):
 ```bash
 venv\Scripts\activate.bat
 ```
 
-PowerShell:
+PowerShell(Windows):
 ```bash
 venv\Scripts\Activate.ps1
+```
+
+macOS / Linux:
+```bash
+source venv/bin/activate
 ```
 
 激活成功后,命令行提示符前面会出现 `(venv)` 字样。之后在**同一个窗口**里
 执行的 `pip install` / `python main.py` 都只作用于这个独立环境,不会影响
 你电脑上其他项目或全局 Python。
 
-> 如果 PowerShell 提示"无法加载文件,因为在此系统上禁止运行脚本",
+> Windows 下如果 PowerShell 提示"无法加载文件,因为在此系统上禁止运行脚本",
 > 说明执行策略限制了脚本运行,可以改用 cmd 执行 `venv\Scripts\activate.bat`,
 > 或者以管理员身份运行一次:
 > `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
@@ -73,8 +81,16 @@ pip install -r requirements.txt
 
 ### 3. 安装 ffmpeg
 
-从 https://ffmpeg.org/download.html 下载 Windows 版,解压后把 `bin` 目录加入系统 PATH。
-安装完在命令行输入以下命令确认:
+Windows:从 https://ffmpeg.org/download.html 下载 Windows 版,解压后把
+`bin` 目录加入系统 PATH。
+
+macOS:推荐用 Homebrew 安装:
+
+```bash
+brew install ffmpeg
+```
+
+安装完在命令行输入以下命令确认(两个平台通用):
 
 ```bash
 ffmpeg -version
@@ -84,10 +100,12 @@ ffmpeg -version
 
 ## 第二步:确认可以录到系统声音(最容易出问题的一步)
 
+### Windows
+
 Windows 默认无法直接录制"系统正在播放的声音",需要装一个能采集系统声音的
 驱动。下面这个方案**已经在实际环境验证过可以正常录到声音**,直接照做即可。
 
-### 推荐方案:安装 virtual-audio-capturer
+#### 推荐方案:安装 virtual-audio-capturer
 
 优点:不依赖"默认播放设备是哪一张声卡"——不管你用蓝牙耳机、显示器音频还是
 USB 音箱,只要是系统正在播放的声音都能录到,不需要额外切换/监听转发设置。
@@ -113,7 +131,7 @@ USB 音箱,只要是系统正在播放的声音都能录到,不需要额外切�
 
    (项目里已经默认配置成这个了,一般不用改)
 
-### 备用方案(如果上面这个装不了或不想装新驱动)
+#### 备用方案(如果上面这个装不了或不想装新驱动)
 
 **方案 A:启用"立体声混音"**
 1. 右键任务栏喇叭图标 → 声音设置 → 更多声音设置
@@ -143,6 +161,44 @@ ffmpeg -list_devices true -f dshow -i dummy
 ```python
 FFMPEG_AUDIO_DEVICE = "这里填你的设备全名"
 ```
+
+### macOS
+
+macOS 和 Windows 一样,默认也无法直接录制"系统正在播放的声音"
+(不存在"立体声混音"这种内置方案),必须装一个虚拟声卡。
+
+**安装步骤:**
+
+1. 安装 [BlackHole](https://existential.audio/blackhole/)(免费虚拟声卡),
+   推荐 2ch 版本,可以用 Homebrew 装:
+
+   ```bash
+   brew install blackhole-2ch
+   ```
+
+2. 打开"音频 MIDI 设置"(在 Spotlight 里搜索),创建一个"多输出设备",
+   同时勾选你平时用的输出设备(如内建扬声器)和 BlackHole 2ch,这样录制
+   的同时自己也能听到声音;然后把系统的默认输出设备切换成这个多输出设备。
+
+3. 查看 ffmpeg 能识别到的设备索引:
+
+   ```bash
+   ffmpeg -f avfoundation -list_devices true -i ""
+   ```
+
+   输出里 "AVFoundation video devices" 下面找屏幕对应的索引(通常是
+   `Capture screen 0`),"AVFoundation audio devices" 下面找 `BlackHole 2ch`
+   对应的索引。
+
+4. 把两个索引按 "视频索引:音频索引" 的格式填入 `config.py`:
+
+   ```python
+   FFMPEG_AVFOUNDATION_DEVICE = "1:0"  # 替换成你实际看到的索引
+   ```
+
+5. 第一次运行 `python main.py` 触发录屏时,macOS 会弹窗要求给终端 /
+   Python 授予"屏幕录制"权限,去 系统设置 → 隐私与安全性 → 屏幕录制
+   里勾选允许,授权后可能需要重启终端再运行一次。
 
 ## 第三步:准备素材
 
@@ -237,16 +293,19 @@ python main.py
 
 ## 已知未验证 / 可能需要调整的地方
 
-这套代码没有在真实 Windows 环境跑过,以下几点大概率需要现场调一下:
+这套代码没有在真实 Windows / macOS 环境跑过,以下几点大概率需要现场调一下:
 
-1. **`FFMPEG_AUDIO_DEVICE` 设备名**:必须跟 `ffmpeg -list_devices` 输出完全一致,
+1. **`FFMPEG_AUDIO_DEVICE` 设备名(Windows)**:必须跟 `ffmpeg -list_devices` 输出完全一致,
    哪怕多一个空格都会报错。
-2. **ffmpeg 停止方式**:代码里用发送 `q` 给 ffmpeg 标准输入来正常结束录制
+2. **`FFMPEG_AVFOUNDATION_DEVICE` 设备索引(macOS)**:插拔外接显示器、切换音频输出
+   设备都可能导致 `ffmpeg -f avfoundation -list_devices true -i ""` 里的索引号变化,
+   如果突然录不到画面/声音,先重新跑一遍这个命令确认索引。
+3. **ffmpeg 停止方式**:代码里用发送 `q` 给 ffmpeg 标准输入来正常结束录制
    (保证视频文件不损坏)。如果发现程序退出时视频没有正常保存/损坏,
    把 `recorder.py` 里 `stop()` 方法里的等待时间(`timeout=20`)调大一些试试。
-3. **中文语音效果**:`edge-tts` 需要联网,如果公司网络有限制导致语音生成失败,
+4. **中文语音效果**:`edge-tts` 需要联网,如果公司网络有限制导致语音生成失败,
    会在运行时直接报错,需要换网络环境。
-4. **性能**:如果 md 文件很多或语音很长,`veryfast` 编码预设兼顾了速度和文件大小,
+5. **性能**:如果 md 文件很多或语音很长,`veryfast` 编码预设兼顾了速度和文件大小,
    如果想要更小体积可以把 `recorder.py` 里的 `-preset veryfast` 换成 `medium`,
    但会更慢一些。
 

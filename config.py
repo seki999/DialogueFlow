@@ -48,7 +48,8 @@ VOICE_MAP = {
 WEB_HOST = "127.0.0.1"
 WEB_PORT = 5000
 
-# ==== ffmpeg 录屏配置(Windows)====
+# ==== ffmpeg 录屏配置 ====
+# --- Windows(gdigrab + dshow) ---
 # 音频设备名称必须替换成你机器上实际的名称。
 # 获取方法(在命令行运行):
 #   ffmpeg -list_devices true -f dshow -i dummy
@@ -56,6 +57,14 @@ WEB_PORT = 5000
 #   "立体声混音 (Realtek High Definition Audio)"
 #   "CABLE Output (VB-Audio Virtual Cable)"
 FFMPEG_AUDIO_DEVICE = "virtual-audio-capturer"
+
+# --- macOS(avfoundation) ---
+# 格式为 "视频设备索引:音频设备索引",获取方法(在终端运行):
+#   ffmpeg -f avfoundation -list_devices true -i ""
+# 视频设备通常是 "Capture screen 0" 之类,索引示例见输出列表;
+# 音频设备必须是虚拟声卡(如 BlackHole 2ch)才能采集到系统播放的声音,
+# 选普通麦克风是录不到 TTS 播放出来的声音的。
+FFMPEG_AVFOUNDATION_DEVICE = "1:0"  # 请替换成你机器上实际的索引组合
 
 FFMPEG_FRAMERATE = 30
 
