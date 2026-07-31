@@ -1,0 +1,8 @@
+speaker 1: How does Kubernetes allocate special hardware like GPUs to Pods?
+speaker 2: A fairly new way is DRA, Dynamic Resource Allocation — it's more flexible than the earlier device plugin mechanism and can support more complex allocation needs.
+speaker 1: What preparation is needed before using DRA?
+speaker 2: First, you need to install the device driver provided by the corresponding hardware vendor in the cluster, so Kubernetes can recognize and manage these device resources.
+speaker 1: How does a Pod express what kind of device it needs?
+speaker 2: Through a ResourceClaim object, which describes in detail what type and specification of device this Pod specifically needs.
+speaker 1: What does the scheduler do once it has this ResourceClaim?
+speaker 2: The scheduler looks for which nodes in the cluster have device resources satisfying that condition, schedules the Pod onto a suitable node, and completes the actual binding and allocation of the device.

@@ -1,0 +1,10 @@
+speaker 1: I'd guess database is the highlight, given Oracle's database heritage.
+speaker 2: Exactly right. This is the area where OCI invests most deeply and where it's most differentiated compared to AWS.
+speaker 1: Which specific services are we focusing on?
+speaker 2: Two: Autonomous Database and HeatWave MySQL - the two flagship products Oracle most wants people to remember.
+speaker 1: Autonomous Database sounds like it's highly automated from the name.
+speaker 2: Right, "self-driving" is its core selling point - automatic patching, tuning, and backups. We'll cover this in detail next chapter, comparing it to RDS and Aurora.
+speaker 1: What about HeatWave MySQL?
+speaker 2: That's fully managed MySQL with a built-in in-memory query acceleration engine, letting one instance handle both transaction processing and analytical queries. We'll cover that in the chapter after, comparing it to the Aurora MySQL plus Redshift combo.
+speaker 1: It sounds like both services are trying to solve "having to split into multiple systems under traditional architectures"?
+speaker 2: Right, that's a key thread for understanding OCI's database services. Keep that in mind and the next two chapters will be easier to follow.

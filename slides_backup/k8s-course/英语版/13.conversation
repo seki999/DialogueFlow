@@ -1,0 +1,8 @@
+speaker 1: Everything so far has been single components — is there a slightly more complete application example?
+speaker 2: There is — the official guestbook case is a classic, using Redis as the backend store and a web app as the frontend.
+speaker 1: How many layers does this case have?
+speaker 2: Three: the frontend accepts guestbook entries from users, the Redis leader node handles writes, and Redis replica nodes take on some of the read load.
+speaker 1: How do these layers find each other?
+speaker 2: Each layer has its own Deployment and a corresponding Service — the frontend connects to the Redis leader just by its Service name, with no need to know which specific Pod it's talking to.
+speaker 1: How do the replica nodes sync data with the leader?
+speaker 2: Once a replica node starts, it actively connects to the leader node to replicate data — that way, even under heavy write load on the leader, read requests can be spread across the replicas.

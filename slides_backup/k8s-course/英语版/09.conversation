@@ -1,0 +1,8 @@
+speaker 1: Should application configuration, like a database address, be hardcoded into the image?
+speaker 2: Not recommended — it's better to store that config separately in a ConfigMap, keeping the image generic so different environments can use different ConfigMaps.
+speaker 1: How does the app actually get the content inside the ConfigMap?
+speaker 2: There are two common ways: as environment variables injected into the container, which the app reads directly; or mounted as a file at some directory in the container, which the app reads as file content.
+speaker 1: How do you choose between the two?
+speaker 2: Simple key-value config is a good fit for environment variables; structured content like a config file is more natural to mount as a file.
+speaker 1: If I change a value in the ConfigMap, will the running app pick it up immediately?
+speaker 2: Generally not automatically — in most cases you need to restart the corresponding Pod, and only after the app re-reads the config does the new value actually take effect.

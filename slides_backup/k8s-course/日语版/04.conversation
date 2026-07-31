@@ -1,0 +1,8 @@
+speaker 1: クラスタは用意できましたが、自分のアプリを実際に動かすにはどうすればいいですか？
+speaker 2: 最も一般的な方法は Deployment を作成することです。どのイメージをどれだけ実行したいかを記述します。
+speaker 1: 具体的にどう作成しますか？
+speaker 2: 最も簡単なのは kubectl create deployment に名前とイメージのアドレスを付ける方法で、コマンド一つでこの Deployment オブジェクトが生成されます。
+speaker 1: 作成すればすぐに動き出すのですか？
+speaker 2: そうです。Deployment コントローラが継続的に動作し、指定した数の Pod を作成し、スケジューラが Pod を適切なノードに割り当て、最終的にコンテナが実際に起動します。
+speaker 1: 今クラスタにどんな Deployment があるか見たい場合は？
+speaker 2: kubectl get deployments を使えば一覧できます。名前、期待されるレプリカ数、現在利用可能なレプリカ数などの情報が見えます。

@@ -1,0 +1,8 @@
+speaker 1: What exactly are these Pod Security Standards people talk about in Kubernetes?
+speaker 2: They're a set of officially defined security baselines, called Privileged, Baseline, and Restricted, getting progressively stricter.
+speaker 1: What's the actual difference between these tiers?
+speaker 2: Privileged applies almost no restrictions, Baseline blocks obviously risky configurations like running a container in privileged mode, and Restricted strictly follows current widely-accepted hardening best practices.
+speaker 1: What does configuring this at the cluster level mean?
+speaker 2: It means setting a default policy for the whole cluster — any namespace without its own separate configuration automatically inherits this unified security level.
+speaker 1: What happens to a Pod that doesn't meet the requirements?
+speaker 2: The admission controller validates it right at the moment of Pod creation — you can configure it to reject creation outright, or just log a warning or an audit entry, depending on which enforcement mode you choose.

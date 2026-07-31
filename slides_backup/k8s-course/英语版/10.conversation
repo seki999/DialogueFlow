@@ -1,0 +1,10 @@
+speaker 1: That ConfigMap concept made sense — does the official tutorial have a concrete example?
+speaker 2: It does — configuring Redis using a ConfigMap, which is a great way to tie together everything we just covered.
+speaker 1: How does it actually work?
+speaker 2: First, you create a ConfigMap whose content is the redis.conf configuration file.
+speaker 1: And then?
+speaker 2: When creating the Redis Pod, you mount that ConfigMap as a volume, into whatever directory Redis expects to find its config file.
+speaker 1: Does Redis automatically know to use this custom config at startup?
+speaker 2: You need to explicitly tell it in the startup command to use the config file at the mounted path — only then will Redis actually run with the parameters written in it.
+speaker 1: How do you confirm it actually took effect?
+speaker 2: You can go into the container, use redis-cli, run config get on a parameter to check its current value, and compare it against what you wrote in the ConfigMap.

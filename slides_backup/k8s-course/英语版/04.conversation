@@ -1,0 +1,8 @@
+speaker 1: I've got a cluster now — how do I actually get my application running on it?
+speaker 2: The most common way is to create a Deployment, which describes which image you want to run and how many copies of it.
+speaker 1: How do I actually create one?
+speaker 2: The simplest way is kubectl create deployment along with a name and an image address — one command generates the Deployment object.
+speaker 1: Does it start running immediately after that?
+speaker 2: Yes. The Deployment controller keeps working continuously, creating the specified number of Pods, and the scheduler assigns those Pods to a node, where the container finally starts.
+speaker 1: What if I want to see what Deployments currently exist in the cluster?
+speaker 2: kubectl get deployments lists them all — you'll see the name, the desired replica count, and the currently available replica count.

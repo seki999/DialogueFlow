@@ -1,0 +1,8 @@
+speaker 1: We just covered AppArmor — from what angle does Seccomp restrict things?
+speaker 2: Seccomp specifically restricts which system calls a container process can make — that is, the scope of what it can directly talk to the kernel about.
+speaker 1: Why does it matter to restrict system calls?
+speaker 2: Because most applications actually only ever need a small subset of system calls — if left unrestricted, in theory an attacker who compromises the app could abuse every available system call to cause damage.
+speaker 1: Do you have to write an allowlist entry by entry for this config?
+speaker 2: Not necessarily — Kubernetes provides a built-in RuntimeDefault profile as a fairly reasonable, ready-to-use starting point that blocks most dangerous calls.
+speaker 1: What if you want to be even more precise?
+speaker 2: You can write a custom Seccomp profile with an allowlist tailored to the specific system calls an application actually needs, and combine that with AppArmor from before to build a layered defense.

@@ -1,0 +1,12 @@
+speaker 1: Let's start with virtual machines. How's OCI Compute different from EC2 in practice?
+speaker 2: The biggest difference is how you pick your instance spec. On AWS you first choose an instance family - m5, c5, r5 - and the CPU-to-memory ratio is fixed by the vendor.
+speaker 1: Right, and I often run out of memory but upgrading to the next tier saddles me with a bunch of unused CPU.
+speaker 2: That problem basically doesn't exist on OCI, because of a concept called Flex VM.
+speaker 1: How does Flex VM actually work?
+speaker 2: After choosing a Flex shape, you can freely fill in the OCPU count and memory size - they're decoupled and not bound to a vendor-preset ratio.
+speaker 1: So could I configure something odd like "1 OCPU with 64 GB of memory"?
+speaker 2: Within certain bounds, yes. There are upper and lower limits, of course, but it's far more flexible than EC2's fixed instance families.
+speaker 1: That's friendly for cost optimization - you're not paying extra CPU costs just to get enough memory.
+speaker 2: Right, and that's also the point where a lot of teams migrating from EC2 first think "this design actually makes more sense."
+speaker 1: So what exactly is this OCPU unit - is it the same as vCPU?
+speaker 2: Not quite. We'll unpack that in the next chapter.

@@ -1,0 +1,8 @@
+speaker 1: The Deployment we learned earlier doesn't seem well-suited for something like a database?
+speaker 2: Right — Pods in a Deployment are interchangeable in name and identity, but databases often need a fixed identity and their own independent data, and that's where you use a StatefulSet.
+speaker 1: What problem does StatefulSet actually solve?
+speaker 2: It guarantees each Pod gets a fixed, ordered name — like pod-0, pod-1, pod-2 — and each Pod binds to its own dedicated persistent volume, so after being recreated, the data is still there on the same volume.
+speaker 1: Does the order of creating and deleting Pods actually matter?
+speaker 2: Very much so — a StatefulSet creates or deletes Pods one at a time in order, which avoids problems for distributed systems like databases that are sensitive to startup order.
+speaker 1: Does using a StatefulSet require anything else configured?
+speaker 2: Yes — it needs to be paired with a headless Service, which doesn't do load balancing but instead lets each Pod be reached individually through a fixed domain name.

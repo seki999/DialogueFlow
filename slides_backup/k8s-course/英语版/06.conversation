@@ -1,0 +1,8 @@
+speaker 1: My app is running now — how do other people access it?
+speaker 2: You can't just use the Pod's IP directly, because Pods can be recreated at any time due to a failure or an update, and the IP will change.
+speaker 1: So how do we solve that?
+speaker 2: With a Service — it provides a fixed, unchanging access point that automatically stays connected to whatever healthy Pods currently exist.
+speaker 1: How does the Service know which Pods to connect to?
+speaker 2: It relies on a label selector — the Service's configuration specifies what labels to look for, and any Pod with matching labels gets included.
+speaker 1: Is creating a Service complicated?
+speaker 2: Very simple. Running kubectl expose deployment against an existing Deployment generates the corresponding Service in one step, and after that, traffic is automatically distributed across the multiple Pod replicas.

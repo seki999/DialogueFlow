@@ -1,0 +1,14 @@
+speaker 1: You mentioned earlier that availability domains work a bit differently from AWS - can you explain more specifically?
+speaker 2: Sure. On AWS, a Region usually has multiple AZs, and building for high availability defaults to "cross-AZ deployment." OCI divides a Region into Availability Domains, or ADs.
+speaker 1: Is an AD the same thing as an AZ?
+speaker 2: Conceptually similar, but here's a pitfall - not every OCI region has multiple ADs; some regions only have 1 AD.
+speaker 1: If there's only 1 AD, how do you handle fault tolerance?
+speaker 2: In that case, OCI uses Fault Domains to add another layer of fault isolation within the same AD - similar to the idea of "different machine rooms within the same city," but without true cross-AD physical separation.
+speaker 1: So if I just carry over AWS's "cross-AZ deployment" architecture assumption directly to OCI, that could cause problems?
+speaker 2: Right, you always need to check how many ADs your target region actually has before deciding on your high-availability architecture design - don't assume it by default.
+speaker 1: Got it, that's an easy detail to overlook. What about the Free Tier - is that worth discussing too?
+speaker 2: Definitely. OCI's Always Free tier is fairly generous, including 2 Autonomous Database instances and a certain amount of Arm compute and storage, all free indefinitely, not just a trial period.
+speaker 1: What's this good for?
+speaker 2: It's great for hands-on practice with the services covered in this course, or for migrating a small system to practice with, without worrying about incurring charges.
+speaker 1: So after finishing this course, should I just go try out all the services we covered in the Free Tier?
+speaker 2: Yes, that's the recommended way to learn. Just watching tends to fade quickly - the Free Tier gives you a zero-cost practice environment.

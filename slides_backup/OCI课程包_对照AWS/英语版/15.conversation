@@ -1,0 +1,10 @@
+speaker 1: Block Volumes should just be for attaching disks, same as EBS?
+speaker 2: Right, the concept is identical - attached to a compute instance, persistent storage independent of the instance's own lifecycle.
+speaker 1: Is resizing convenient? EBS can now resize online without downtime.
+speaker 2: Block Volumes also supports online resizing, and the experience is basically the same as EBS.
+speaker 1: What about performance tiers? EBS has gp3, io2 and so on.
+speaker 2: OCI has similar performance tier options. Logically it maps to general-purpose and high-performance tiers - the exact tier names differ, but the decision-making is the same: general-purpose for normal workloads, high-performance for IOPS-sensitive ones like databases.
+speaker 1: Are typical uses basically the same as EBS - like database data volumes?
+speaker 2: Yes, database data volumes and application data directories requiring persistence are Block Volumes' main use cases, fully matching EBS's positioning.
+speaker 1: What's the decision logic versus Object Storage - when do I use which?
+speaker 2: Simply put: use Block Volumes when you need to mount it on a single instance and treat it like a filesystem; use Object Storage when you don't need mounting and want API-based, multi-party shared access. Same decision criteria as choosing between EBS and S3.

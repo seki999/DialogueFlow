@@ -1,0 +1,12 @@
+speaker 1: The compute category alone has five or six services - it feels like a lot. Can I get a bird's-eye view first?
+speaker 2: Sure, look at this diagram - the left side is OCI's compute family, the right side is the corresponding AWS service, connected line by line.
+speaker 1: Compute VM to EC2, that one I get. GPU/HPC to EC2 GPU plus ParallelCluster - what does that mean?
+speaker 2: ParallelCluster is AWS's dedicated tool for managing high-performance computing clusters. OCI's counterpart is its own bare-metal GPU cluster offering.
+speaker 1: OKE to EKS, that one should be uncontroversial - both are managed Kubernetes.
+speaker 2: Right, this one's basically a one-to-one match.
+speaker 1: Functions to Lambda, Container Instances to Fargate - I use both of those regularly.
+speaker 2: Exactly, and the usage philosophy is similar too - Functions is writing a function and paying per invocation; Container Instances is running a container directly without managing VMs.
+speaker 1: What's the learning order for these services?
+speaker 2: We'll first cover the VM itself, then dedicate a whole chapter to the billing unit pitfall, then bare metal, Arm, GPU/HPC, and finally OKE, Functions, and Container Instances.
+speaker 1: Why does billing unit deserve a whole chapter on its own?
+speaker 2: Because it's the single easiest place for someone with an AWS background to miscalculate costs. It's worth explaining clearly on its own.

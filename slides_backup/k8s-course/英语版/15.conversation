@@ -1,0 +1,8 @@
+speaker 1: When moving traditional apps like WordPress and MySQL to Kubernetes, what should you watch out for?
+speaker 2: The key is data persistence — neither the site files nor the database data can be lost when a Pod is recreated, so both need their own persistent volumes.
+speaker 1: How do you handle sensitive information like the database password?
+speaker 2: Don't write it into a plain-text config file — store it in a Secret object instead, and have the Pod reference it securely through an environment variable.
+speaker 1: How does WordPress know where to connect to MySQL?
+speaker 2: Also through environment variables — pass WordPress the name of MySQL's Service, and WordPress uses that address directly as the database host.
+speaker 1: Do these two components use a StatefulSet or a plain Deployment?
+speaker 2: This tutorial uses a single-replica Deployment paired with a persistent volume, which is simpler than a full StatefulSet and is well suited to demonstrating the basic principles of persistence.

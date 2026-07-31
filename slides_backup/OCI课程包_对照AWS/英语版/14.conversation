@@ -1,0 +1,10 @@
+speaker 1: Is Object Storage used differently from S3?
+speaker 2: Usage is very similar - both follow a "bucket + object" model and support Standard and Archive tiers.
+speaker 1: If I'm used to using S3 for static site hosting or log storage, does Object Storage map directly to those use cases?
+speaker 2: Yes, those scenarios are basically universal - the API calling conventions and SDKs just differ.
+speaker 1: You mentioned egress traffic being cheaper - where does that actually show up?
+speaker 2: It's when your application or users download data from Object Storage out to the public internet - the pricing is lower than S3, and that difference gets magnified in high-volume download scenarios.
+speaker 1: Give me an example - say I run a video site with heavy user downloads or origin-server traffic.
+speaker 2: In that kind of scenario, egress costs could be a large chunk of the total bill. In that case, putting the storage on OCI - or even hosting compute there too for a hybrid setup - could bring meaningful savings.
+speaker 1: If my data isn't accessed often, should I put it in the Archive tier the same way I'd use Glacier?
+speaker 2: Exactly the same logic - moving cold data to the archive tier saves a lot on standard-tier storage costs, though you'll need to accept some delay when retrieving it.

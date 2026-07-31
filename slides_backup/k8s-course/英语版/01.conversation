@@ -1,0 +1,8 @@
+speaker 1: Why do we need something as specific as Kubernetes? Can't we just run programs directly on servers?
+speaker 2: For a single program, sure. But real applications are often made up of dozens or hundreds of containers, and once you factor in scaling, failure recovery, and rolling out new versions, managing that by hand quickly spirals out of control.
+speaker 1: So what does Kubernetes actually do for us?
+speaker 2: It schedules containers onto the right machines, monitors their health, automatically restarts or replaces failed ones, scales up when more instances are needed, and rolls out new versions smoothly.
+speaker 1: That sounds like a lot. How is this course structured?
+speaker 2: We'll follow the structure of the official tutorials — starting with core concepts and creating your first cluster, then configuration management, then hands-on cases for stateless and stateful applications, followed by services and security, and finally cluster management topics.
+speaker 1: So it goes from simple to complex?
+speaker 2: Exactly. The early chapters use minimal examples to build up the concepts, and the later ones tie everything together using real examples like WordPress, Cassandra, and ZooKeeper.

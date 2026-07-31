@@ -1,0 +1,10 @@
+speaker 1: What's the fundamental difference between File Storage and Block Volumes we just covered?
+speaker 2: The core difference is whether multiple instances can mount it simultaneously. Block Volumes is generally single-instance exclusive, while File Storage was designed from the ground up for multi-instance sharing.
+speaker 1: That's the same relationship as EFS versus Block Volumes/EBS.
+speaker 2: Exactly the same. File Storage is built on the NFS protocol, and its usage basically maps to EFS.
+speaker 1: What scenarios would need multiple instances sharing the same files?
+speaker 2: For example, a group of web servers all needing to access the same batch of uploaded media files, or a content management system needing multiple backend instances to share a file directory.
+speaker 1: What about performance and scaling?
+speaker 2: It also scales capacity automatically as needed - you don't have to plan a fixed size upfront the way you would with Block Volumes. This matches EFS's elastic scaling approach.
+speaker 1: If I'm running Pods in OKE and want multiple Pods to share storage, is that also File Storage?
+speaker 2: Yes, in that scenario File Storage is typically the go-to choice for configuring a shared-type PersistentVolume in Kubernetes - the same idea as using EFS as shared storage in EKS.

@@ -1,0 +1,14 @@
+speaker 1: Is Functions basically OCI's version of Lambda?
+speaker 2: Yes, positioned identically - event-driven, pay per invocation, no server management.
+speaker 1: Is it built in-house or based on some open-source project?
+speaker 2: It's built on the open-source Fn Project, which is different from Lambda, which is entirely closed-source.
+speaker 1: Does being open-source mean better portability?
+speaker 2: In theory yes, the Fn Project itself can be deployed elsewhere, but actual migration depends on how many OCI-specific triggers and permission setups you've used.
+speaker 1: Are the trigger sources similar to Lambda's?
+speaker 2: Similar - common ones include API Gateway triggers, Events service triggers, and Streaming data triggers, roughly mapping to Lambda's API Gateway, EventBridge, and Kinesis triggers.
+speaker 1: What about the billing model?
+speaker 2: Billed by invocation count and execution duration - same billing logic as Lambda.
+speaker 1: Does the cold-start problem also exist on Functions?
+speaker 2: It does. Cold starts are a general issue with serverless function compute, and the optimization approach is similar to Lambda - controlling package size, reusing connection pools, and so on.
+speaker 1: If I already have Lambda functions written, is migrating to Functions a hassle?
+speaker 2: The business logic code itself basically doesn't need to change. What mainly needs redoing is the trigger bindings and permission config, in OCI's way.

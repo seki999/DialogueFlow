@@ -1,0 +1,12 @@
+speaker 1: コンピュート分類だけで5〜6のサービスがあって、情報量が多い気がします。まず全体像を見せてもらえますか?
+speaker 2: もちろんです。この図を見てください、左側がOCIのコンピュートファミリー、右側が対応するAWSサービスで、それぞれ線で結んでいます。
+speaker 1: Compute VMがEC2に対応、これは分かります。GPU/HPCがEC2 GPU+ParallelClusterに対応、これはどういう意味ですか?
+speaker 2: ParallelClusterはAWSが高性能計算クラスタを管理するための専用ツールです。OCI側で対応するのは自社のベアメタルGPUクラスタソリューションです。
+speaker 1: OKEがEKSに対応、これは異論の余地がなさそうですね。両方ともマネージドKubernetesです。
+speaker 2: その通りです。これはほぼ1対1で対応しています。
+speaker 1: FunctionsがLambdaに、Container InstancesがFargateに対応、この2つは普段使っています。
+speaker 2: そうです。しかも使い方の考え方も似ています。Functionsは関数を書いて呼び出し回数で課金、Container Instancesは仮想マシンを管理せず直接コンテナを動かします。
+speaker 1: これらのサービスの学習順序はどうなっていますか?
+speaker 2: 次にまずVM自体を説明し、課金単位の落とし穴を1章使って説明し、その後ベアメタル、Arm、GPU/HPCを説明し、最後にOKE、Functions、Container Instancesを説明します。
+speaker 1: なぜ課金単位を単独で1章として取り上げるのですか?
+speaker 2: AWSの背景を持つ人が最もコスト計算を間違えやすい場所だからです。単独できちんと説明する価値があります。

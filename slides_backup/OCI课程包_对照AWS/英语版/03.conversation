@@ -1,0 +1,14 @@
+speaker 1: I see OCI split into five categories in the diagram - is this Oracle's official taxonomy?
+speaker 2: The official service list is much more granular. We grouped things into compute, storage, networking, database, and security based on what's most commonly used and easiest to map to AWS.
+speaker 1: These five categories happen to be exactly the modules I use every day in AWS architectures too.
+speaker 2: Right, so you'll find an old AWS friend in almost every category.
+speaker 1: What specific services fall under each category?
+speaker 2: Compute includes Compute, Bare Metal, GPU/HPC, OKE, Functions, and Container Instances. Storage covers Object, Block, File, and Archive storage.
+speaker 1: What about networking and database?
+speaker 2: Networking's core is VCN, Load Balancer, and FastConnect. For database, we focus on Autonomous Database and HeatWave MySQL - the two flagship services Oracle wants you to remember most.
+speaker 1: Security sounds pretty abstract.
+speaker 2: We focus security on IAM and Compartment, since that's where OCI differs most from AWS IAM.
+speaker 1: Is the learning order just a flat walkthrough of these five, or is there a sequence?
+speaker 2: There's a sequence, following how you'd actually build an architecture - compute first, then storage, then networking, then database, and security last.
+speaker 1: That matches how a real project goes too - spin up servers first, then wire up storage and networking.
+speaker 2: Exactly, so once you finish the course you can go build one hands-on right away.

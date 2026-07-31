@@ -1,0 +1,10 @@
+speaker 1: Networking is an area I know pretty well from AWS - VPC, subnets, route tables, all of that.
+speaker 2: Then you'll find OCI follows basically the same logic here. The core is VCN, which maps to VPC.
+speaker 1: What about Load Balancer and FastConnect?
+speaker 2: Load Balancer maps to ELB - meaning ALB/NLB-type services; FastConnect maps to Direct Connect, dedicated-line access to a data center.
+speaker 1: Can I basically reuse my AWS networking design instincts when learning this?
+speaker 2: The instincts largely transfer, but there are a few details that differ - like how security groups are implemented and how availability domains are divided. We'll cover those in later chapters.
+speaker 1: Why does networking come after compute and storage instead of first, since it's foundational?
+speaker 2: Because while VCN is foundational infrastructure, understanding its value is more intuitive once you've seen scenarios like "compute instances run inside it" or "databases use it for private access." Placing it here helps tie together what you already learned.
+speaker 1: So should we start with VCN itself?
+speaker 2: Yes, the next chapter walks through VCN's core concepts directly against VPC.

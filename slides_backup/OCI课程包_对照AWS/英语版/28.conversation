@@ -1,0 +1,16 @@
+speaker 1: We've finished the course - can you walk me through the overall thread one more time?
+speaker 2: Sure, take a look at this summary diagram. We started with compute, then went through storage, networking, database, and security - five categories, 15 services in total.
+speaker 1: What stood out most in the compute category?
+speaker 2: Probably the OCPU-to-vCPU conversion trap - get that wrong and every downstream cost comparison ends up skewed.
+speaker 1: What about storage?
+speaker 2: Storage has the highest conceptual overlap with AWS - the four services map essentially one-to-one. The one difference worth remembering is that egress traffic pricing is generally lower.
+speaker 1: What about networking and database?
+speaker 2: Networking's core is VCN, almost identical to VPC - just remember Security Lists and NSGs can be layered together. Database is where OCI invests most deeply; both Autonomous Database and HeatWave MySQL reflect the same philosophy: reduce operational burden and simplify architecture.
+speaker 1: What about the security section? I remember the Compartment versus IAM difference pretty clearly.
+speaker 2: Right, that's the area with the biggest divergence we covered - Compartment uses a tree structure for isolation within a single tenancy, and policy statements read closer to natural language.
+speaker 1: Are there any common pitfalls worth repeating?
+speaker 2: Three: first, OCPU isn't the same as vCPU, remember to convert; second, the number of availability domains varies by region, don't assume AWS's multi-AZ pattern carries over; third, the Free Tier is a great place to practice, don't forget to use it.
+speaker 1: After learning all this, what's worth digging into next?
+speaker 2: Two directions - one is multi-cloud interconnects, like running Oracle Database directly on Azure or Google Cloud in a hybrid setup; the other is Dedicated Region, an advanced form where the entire OCI service catalog is deployed into your own data center.
+speaker 1: That's great, those sound like solid next steps for me.
+speaker 2: Right, this course gave you a map. To truly master each service's deeper details, you'll need to actually get hands-on.

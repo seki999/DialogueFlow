@@ -1,0 +1,8 @@
+speaker 1: What kind of app counts as stateless?
+speaker 2: Simply put, one that doesn't depend on data stored on local disk — you can recreate a new replica at will and its functionality is exactly the same, nothing gets lost.
+speaker 1: How do you let people outside the cluster reach this kind of app?
+speaker 2: A default Service is only reachable from inside the cluster — to expose it externally, you need a Service of type LoadBalancer or NodePort.
+speaker 1: How does the LoadBalancer type actually work?
+speaker 2: In a cloud environment, creating this type of Service automatically requests a load balancer from your cloud provider and assigns it an externally reachable IP.
+speaker 1: So practicing locally with Minikube, there's no real cloud load balancer?
+speaker 2: Right — in a local environment you need a command like minikube service, which has Minikube help open up a path reachable from your own machine to simulate external access.

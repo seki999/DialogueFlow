@@ -1,0 +1,12 @@
+speaker 1: What exactly does bare metal mean, and how's it different from a regular VM?
+speaker 2: A regular VM runs a Hypervisor layer on the physical machine and slices it into many VMs for different customers. Bare metal hands you the whole physical machine directly, with no virtualization layer in between.
+speaker 1: On AWS side, that's m5.metal-type instances, right?
+speaker 2: Right, AWS Bare Metal instances follow this same idea - the concept maps completely to OCI's version.
+speaker 1: So what scenarios call for bare metal instead of a regular VM?
+speaker 2: One typical scenario is a database extremely sensitive to performance that can't tolerate any virtualization overhead. Another is when you need to install your own Hypervisor layer, like running VMware.
+speaker 1: What does "installing your own Hypervisor" mean - can't you do that on a regular VM?
+speaker 2: A regular VM already has one virtualization layer, so you can't nest a complete virtualization platform on top of it. Bare metal is a physical machine, so you're free to install your own virtualization software.
+speaker 1: How committed is OCI to bare metal?
+speaker 2: According to official materials, OCI invested in bare metal very early on, and the machine type selection is fairly rich - unlike other cloud vendors' early "VM-first" strategy.
+speaker 1: So the decision logic is: use Flex VM for general scenarios, and only go bare metal for extreme performance needs or when you need to install a Hypervisor?
+speaker 2: Right, that's the same decision logic as choosing between a regular EC2 instance and a Bare Metal instance on AWS.

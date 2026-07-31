@@ -1,0 +1,12 @@
+speaker 1: OKE sounds like it's just an EKS knock-off from the name alone.
+speaker 2: The structure is indeed a close match - both follow "managed Control Plane + a Node Pool you either self-manage or have managed for you."
+speaker 1: EKS charges for the Control Plane. Does OKE?
+speaker 2: OKE's Control Plane is currently free, though pricing policy can change - best to check the latest official page.
+speaker 1: Are the machine types available in the Node Pool the same as the compute services we already covered?
+speaker 2: Yes, Node Pools let you choose regular VMs, bare metal, or even Arm or GPU nodes - this is the same underlying compute resource from earlier chapters.
+speaker 1: If I already have a bunch of Kubernetes YAML files, is migrating a lot of work?
+speaker 2: The application-layer YAML basically doesn't need major changes since it's all standard Kubernetes API. What mainly needs adjusting is the cloud-resource-related parts - storage classes, load balancer annotations, network config.
+speaker 1: Does the storage class correspond to the Object/Block Storage we'll cover later?
+speaker 2: Right, once you finish the storage category chapters you'll know how to configure PersistentVolume.
+speaker 1: What about networking?
+speaker 2: Networking involves VCN, which we cover in detail in the networking category - conceptually it's basically equivalent to AWS VPC.

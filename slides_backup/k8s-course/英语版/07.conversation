@@ -1,0 +1,8 @@
+speaker 1: If traffic suddenly spikes one day and my app only has one replica, what do I do?
+speaker 2: Just scale up — scaling is essentially just changing the desired replica count on the Deployment.
+speaker 1: What command do I actually use?
+speaker 2: kubectl scale deployment with the name and the replicas count, say going from 1 to 5.
+speaker 1: Do I need to reconfigure the Service for these new replicas?
+speaker 2: No — because the Service dynamically matches Pods using a label selector, any new Pod with the same labels automatically gets included in traffic distribution.
+speaker 1: And if traffic drops and I want to scale back down?
+speaker 2: Same scale command with a smaller number — Kubernetes safely terminates the extra Pods, and the whole process requires no changes to the application code itself.

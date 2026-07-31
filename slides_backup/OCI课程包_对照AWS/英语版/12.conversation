@@ -1,0 +1,10 @@
+speaker 1: What's the difference between Container Instances and the OKE we covered earlier? Both run containers, right?
+speaker 2: The difference is complexity. OKE is a full Kubernetes cluster, suited for complex multi-container, multi-service orchestration. Container Instances is for "I just want to run a container" - no cluster concept needed.
+speaker 1: What AWS service does this correspond to?
+speaker 2: Fargate - more precisely, the "run a task directly" usage of Fargate that doesn't involve ECS/EKS cluster management.
+speaker 1: What scenarios suit this type of service?
+speaker 2: Typical scenarios are batch jobs, scheduled tasks, or a very lightweight API service - it's not worth standing up a whole Kubernetes cluster just for that.
+speaker 1: How's billing calculated?
+speaker 2: Billed on the actual CPU and memory the container uses plus runtime duration - matching Fargate's on-demand billing logic.
+speaker 1: If my service later becomes more complex and needs multi-container coordination, should I move to OKE?
+speaker 2: Right, that's a natural evolution path - use Container Instances for simple scenarios, and move up to OKE once you need service discovery and auto-scaling orchestration complexity. AWS's evolution from a single Fargate task to EKS follows the same logic.

@@ -1,0 +1,8 @@
+speaker 1: My app wants to do some analytics based on visitors' real IPs, but I keep getting internal cluster addresses instead. What's going on?
+speaker 2: That's caused by the Service's default forwarding behavior — to achieve cross-node traffic distribution, the client's real IP can get replaced along the way when the request is forwarded through a node.
+speaker 1: So is there a way to preserve the real client IP?
+speaker 2: Yes — set the Service's externalTrafficPolicy to Local, and traffic will only be forwarded to Pods on the local node, preserving the source IP.
+speaker 1: That sounds like it's all upside — why isn't it the default?
+speaker 2: Because using Local means traffic is no longer balanced across nodes — if a particular node happens to have no Pods for this app, traffic hitting that node can't be handled, potentially causing an imbalance in load.
+speaker 1: So how should you choose in an actual project?
+speaker 2: It depends on whether the business genuinely depends on the source IP — scenarios like access control, rate limiting, or log analysis might need it. If not, the default policy is simpler and more evenly balanced.

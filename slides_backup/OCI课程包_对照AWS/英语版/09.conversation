@@ -1,0 +1,14 @@
+speaker 1: Is the GPU and HPC category basically just about who has more GPUs?
+speaker 2: The number of GPUs is one factor, but what matters more is how nodes communicate with each other, especially for large-scale distributed training.
+speaker 1: Why does communication matter so much?
+speaker 2: Because during large model training, GPU nodes exchange gradient data constantly. If inter-node network latency is high, more GPUs won't help - the network becomes the bottleneck.
+speaker 1: How does AWS solve this?
+speaker 2: AWS uses EFA, an elastic network adapter technology, paired with P-series and G-series GPU instances, forming UltraClusters to pursue low-latency inter-node connectivity.
+speaker 1: What about OCI?
+speaker 2: OCI primarily offers RDMA-interconnected bare-metal GPU clusters, commonly configured with high-end cards like H100, H200, or even B200.
+speaker 1: Is RDMA similar to EFA?
+speaker 2: The goal is similar - both aim to skip the overhead of traditional network protocol stacks between GPUs and enable direct, high-speed memory-to-memory data transfer.
+speaker 1: What about HPC cluster management tools? AWS has ParallelCluster.
+speaker 2: Right, and OCI's counterpart in that role is its own HPC cluster management solution - same idea: automate building and scheduling compute nodes for you.
+speaker 1: So you can't just look at single-card specs when choosing a solution?
+speaker 2: Right, you always need to evaluate this together with cluster network architecture - otherwise actual training efficiency might not scale proportionally with per-card benchmarks at all.

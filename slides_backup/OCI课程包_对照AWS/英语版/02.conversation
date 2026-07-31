@@ -1,0 +1,14 @@
+speaker 1: Let's start with the basics - what exactly is OCI? Is it the same kind of thing as AWS?
+speaker 2: Yes, it's a public cloud infrastructure platform providing compute, storage, and networking, just from Oracle instead.
+speaker 1: Isn't Oracle a database company? Why are they also doing cloud?
+speaker 2: Exactly because of that database heritage, OCI invests especially deeply in database services - that's one of its differentiators against AWS.
+speaker 1: How does its scale compare to AWS?
+speaker 2: Officially, OCI has 50 regions worldwide, and each region offers the same 200+ services, with consistent pricing across commercial and government regions.
+speaker 1: AWS has some services that vary by region. Does that mean OCI is more standardized?
+speaker 2: Right, that's a selling point OCI frequently highlights - what they call "consistency."
+speaker 1: What about cost? I keep hearing OCI is cheaper.
+speaker 2: The official numbers claim compute is 50% cheaper, block storage 70% cheaper, and outbound network traffic 80% cheaper - though that's Oracle's own framing, and actual savings depend on your specific instance specs.
+speaker 1: If egress traffic is 80% cheaper, does that mean it's a better deal if I move a lot of data out to the public internet?
+speaker 2: Yes, that's exactly why teams doing video streaming, CDN origin, or large-scale data exports often compare OCI against AWS on this specific point.
+speaker 1: So should we look at how OCI's 200+ services break down overall next?
+speaker 2: Yes, next chapter we'll split those 200+ services into five major categories.

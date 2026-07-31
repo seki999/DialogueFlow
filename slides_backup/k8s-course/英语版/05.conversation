@@ -1,0 +1,8 @@
+speaker 1: What exactly is this Pod thing we keep mentioning — is it the same as a container?
+speaker 2: Not quite. A Pod is the smallest scheduling unit in Kubernetes, and it can hold one or more containers that share network and storage.
+speaker 1: How do I check what Pods currently exist in the cluster and what state they're in?
+speaker 2: kubectl get pods gives you a list, including the name, whether it's Running, and how many times it's been restarted.
+speaker 1: If a Pod just won't come up, how do I troubleshoot that?
+speaker 2: You can run kubectl describe pod with its name — that shows a detailed event log, things like image pull failures or insufficient resources.
+speaker 1: What about the logs the container itself prints?
+speaker 2: kubectl logs with the Pod name shows you the container's standard output — that's the most common tool for troubleshooting application-level issues.

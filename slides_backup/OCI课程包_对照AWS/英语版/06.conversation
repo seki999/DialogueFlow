@@ -1,0 +1,14 @@
+speaker 1: You said last chapter OCPU and vCPU aren't the same thing - where's the actual difference?
+speaker 2: Simply put, AWS's vCPU is one hyperthread, while OCI's OCPU is an entire physical core, including both of its hyperthreads.
+speaker 1: So 1 OCPU is roughly equal to 2 vCPUs?
+speaker 2: Right, that's the approximate conversion, and it's what the official documentation states too.
+speaker 1: Where does this pitfall actually show up?
+speaker 2: The most common spot is when reading a quote. Seeing "4 OCPU, 16GB memory" on OCI, a lot of people instinctively treat it as a 4-vCPU spec out of AWS habit.
+speaker 1: But it's actually equivalent to AWS's 8-vCPU compute?
+speaker 2: Right, and without converting, you'd think "why is this OCI spec so cheap" - but really you're comparing someone else's 8-core price against your own 4-core price, which isn't apples-to-apples.
+speaker 1: So what's the correct approach?
+speaker 2: Before doing cost comparisons, convert both sides to "physical core count," or uniformly to vCPU count, and then compare pricing on the same dimension.
+speaker 1: That's an important reminder - otherwise you'd end up with a misleading conclusion like "OCI is half the price."
+speaker 2: Exactly, which is why we pulled this into its own chapter. Get this wrong and every downstream cost comparison ends up skewed.
+speaker 1: Got it - from now on when I see OCPU, I'll double it before comparing.
+speaker 2: Right, that's the simplest rule and also the easiest one to forget.

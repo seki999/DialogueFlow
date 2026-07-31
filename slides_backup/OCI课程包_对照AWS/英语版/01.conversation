@@ -1,0 +1,12 @@
+speaker 1: I've been using AWS for years. Why would I need to learn OCI separately? Can't I just draw analogies as I go?
+speaker 2: You can, but only once you know which service maps to which. Otherwise the analogy is just a guess.
+speaker 1: Fair enough, the names are all different anyway. OCI doesn't even have something called EC2.
+speaker 2: Right, and it's not just names. Some underlying concepts differ too, like billing units and account isolation models.
+speaker 1: Is this course going to start from cloud computing basics?
+speaker 2: No, we assume you already understand the AWS logic. Every chapter will directly say "this OCI service corresponds to this AWS service."
+speaker 1: So it's basically a translation cheat sheet for me.
+speaker 2: Pretty much. We'll cover five categories: compute, storage, networking, database, and security - 15 commonly used OCI services in total.
+speaker 1: That happens to cover exactly the capabilities I use most often in AWS.
+speaker 2: Right, by the end you should be able to look at the OCI console and instantly picture the corresponding AWS service in your head.
+speaker 1: Where do we start?
+speaker 2: First let's clarify how OCI positions itself as a cloud, then we'll get into the details.

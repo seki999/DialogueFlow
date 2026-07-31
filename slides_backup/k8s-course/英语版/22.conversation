@@ -1,0 +1,8 @@
+speaker 1: Besides Pod Security Standards, what's AppArmor used for?
+speaker 2: AppArmor is a mandatory access control mechanism built into the Linux kernel — you can define a boundary of allowed behavior for a specific program, specifying what it can and can't do.
+speaker 1: What aspects can it specifically restrict when applied to a container?
+speaker 2: Common ones include which file paths can be accessed, whether certain privileged network operations are allowed, and which system calls can be invoked.
+speaker 1: What preparation is needed to use this in Kubernetes?
+speaker 2: First, the corresponding AppArmor profile needs to be loaded ahead of time on the node's host OS — Kubernetes itself isn't responsible for generating this file.
+speaker 1: How does a Pod use this profile afterward?
+speaker 2: In the Pod definition, you specify which AppArmor profile this container should apply via an annotation or a dedicated field — that way, even if a process inside the container gets compromised, it's very hard for it to cross that boundary and do something more dangerous.

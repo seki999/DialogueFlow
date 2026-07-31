@@ -1,0 +1,8 @@
+speaker 1: Compared to the earlier WordPress case, what makes Cassandra more complex?
+speaker 2: Cassandra is itself a distributed database — nodes need to discover each other and sync data with each other, which is exactly the kind of scenario a StatefulSet is built for.
+speaker 1: How do the nodes find each other?
+speaker 2: Through the concept of a seed node — when a new node starts up, it connects to the seed node to get the whole cluster's topology information.
+speaker 1: What role does the StatefulSet play here specifically?
+speaker 2: It guarantees each Cassandra node has a fixed name and dedicated storage, and paired with a headless Service, nodes can communicate directly using stable addresses.
+speaker 1: What if you want to grow this Cassandra cluster?
+speaker 2: Very simple — just increase the StatefulSet's replica count, and the new node will connect to the seed node after starting up, sync its data, and join the whole cluster.

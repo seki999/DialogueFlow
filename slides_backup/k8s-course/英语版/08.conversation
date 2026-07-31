@@ -1,0 +1,8 @@
+speaker 1: When it's time to release a new version of an app, do you have to stop the old version first before starting the new one?
+speaker 2: Not at all. Kubernetes supports rolling updates by default — it replaces old-version Pods one at a time with new ones, and the service stays available the entire time.
+speaker 1: How do you trigger this update?
+speaker 2: A common way is kubectl set image — change the image the Deployment's container uses to the new version, and the controller automatically starts the rolling replacement.
+speaker 1: How do I know how far along the update is?
+speaker 2: You can check in real time with kubectl rollout status — it shows how many Pods are still left to update.
+speaker 1: If something's wrong with the new version, can I switch back immediately?
+speaker 2: Yes — kubectl rollout undo rolls the Deployment back to its previous version, safely switching back the same rolling way.

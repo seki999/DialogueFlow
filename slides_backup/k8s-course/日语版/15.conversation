@@ -1,0 +1,8 @@
+speaker 1: WordPress や MySQL のような従来型アプリを Kubernetes に移す際、何に注意すべきですか？
+speaker 2: 重要なのはデータの永続化です。サイトファイルとデータベースデータはどちらも Pod の再作成で失われてはいけないので、両方にそれぞれの永続ボリュームを付ける必要があります。
+speaker 1: データベースパスワードのような機密情報はどう扱いますか？
+speaker 2: 平文の設定ファイルに書いてはいけません。Secret オブジェクトに保存し、Pod は環境変数を通じて安全にそれを参照します。
+speaker 1: WordPress はどうやって MySQL への接続先を知るのですか？
+speaker 2: 同様に環境変数を通じて、MySQL に対応する Service の名前を WordPress に渡し、WordPress は内部でこのアドレスをデータベースホスト名として直接使います。
+speaker 1: この二つのコンポーネントは StatefulSet を使うのですか、それとも普通の Deployment ですか？
+speaker 2: このチュートリアルでは単一レプリカの Deployment と永続ボリュームの組み合わせを使っていて、完全な StatefulSet より簡単で、永続化の基本原理を示すのに適しています。

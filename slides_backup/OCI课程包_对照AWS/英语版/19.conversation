@@ -1,0 +1,10 @@
+speaker 1: Looking at this diagram, VCN, subnets, route tables, gateways - this structure is nearly identical to VPC.
+speaker 2: Right, this is where OCI and AWS map most closely - you can basically reuse your VPC design experience directly.
+speaker 1: Public subnet gets an Internet Gateway, private subnet gets a NAT Gateway - is that logic the same too?
+speaker 2: Same logic - public subnets that need direct public-internet communication get an Internet Gateway, and private subnets that only need one-way outbound access (like downloading software packages) get a NAT Gateway.
+speaker 1: What about the route table configuration approach?
+speaker 2: Same logic there too - associate a route table with a subnet, and inside the route table define "which network range routes through which gateway," matching how VPC route tables are configured.
+speaker 1: So the compute instances and Load Balancer we covered earlier - are they all deployed inside subnets within a VCN?
+speaker 2: Yes, think of the VCN as a big house, subnets as rooms within it, and compute instances and load balancers as living in one room or another. A database can also be configured so it's only accessible via a private subnet.
+speaker 1: Is security control also completely identical to AWS security groups?
+speaker 2: There's a small nuance here - OCI has two mechanisms: Security Lists and Network Security Groups. That's what we'll cover in the next chapter.

@@ -1,0 +1,10 @@
+speaker 1: File Storageは前のBlock Volumesと本質的にどう違うんですか?
+speaker 2: 最も核心的な違いは複数のインスタンスから同時にマウントできるかどうかです。Block Volumesは通常単一インスタンス専有ですが、File Storageは元々複数インスタンス共有向けに設計されています。
+speaker 1: このロジックはEFSとBlock Volumes/EBSの違いと同じですね。
+speaker 2: 完全に同じです。File StorageはNFSプロトコルベースで、使い方は基本的にEFSに対応しています。
+speaker 1: どんなシナリオで複数インスタンスが同じファイルを共有する必要がありますか?
+speaker 2: 例えば一群のWebサーバーが同じアップロードされたメディアファイルにアクセスする必要がある場合や、コンテンツ管理システムで複数のバックエンドインスタンスがファイルディレクトリを共有する必要がある場合です。
+speaker 1: パフォーマンスと拡張についてはどうですか?
+speaker 2: これも必要に応じて自動的に容量を拡張します。Block Volumesのように事前に固定サイズを計画しておく必要はありません。この点はEFSの弾力的拡張の考え方と一致しています。
+speaker 1: もし私がOKEでPodを動かしていて、複数のPodでストレージを共有したい場合は、これもFile Storageを使いますか?
+speaker 2: そうです。このようなシナリオでは、File StorageはKubernetesで共有型PersistentVolumeを設定する際の第一選択肢になることが多いです。EKSでEFSを共有ストレージとして使うのと同じ考え方です。

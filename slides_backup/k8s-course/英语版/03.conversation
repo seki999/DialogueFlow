@@ -1,0 +1,8 @@
+speaker 1: The first time you touch Kubernetes, do you need to go request a cloud server or something?
+speaker 2: No, the official tutorial's entry point is Minikube — install it on your own machine, run minikube start, and a small local cluster comes up.
+speaker 1: Once it's up, how do I know it's actually working?
+speaker 2: You can run kubectl cluster-info — if it shows you the control plane's address, that means the cluster is ready to accept your commands.
+speaker 1: Is there a more visual way to see what's happening in the cluster?
+speaker 2: There is — running minikube dashboard opens a web-based visual interface where you can see the status of nodes, Pods, and other resources.
+speaker 1: Is this step the foundation for everything else in the course?
+speaker 2: Yes. Whether you're learning deployment, scaling, or security policies later, you always need a working cluster first, and Minikube is the practice ground we'll come back to throughout this course.

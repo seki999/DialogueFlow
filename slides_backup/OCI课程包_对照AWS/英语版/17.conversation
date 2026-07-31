@@ -1,0 +1,10 @@
+speaker 1: Is Archive Storage basically OCI's version of Glacier?
+speaker 2: Right, positioned exactly the same - trading retrieval latency for lower long-term storage costs.
+speaker 1: What does that retrieval latency actually feel like - same as Glacier where you can't get the data right away?
+speaker 2: Right, you can't download it instantly like in the Standard tier. You need to submit a retrieval request first and wait a while (the exact time depends on the service tier) before the data becomes accessible.
+speaker 1: What kind of data is suited to going in there?
+speaker 2: Typically historical data you're required to retain for compliance but almost never access - old logs from years ago, financial record retention, old backup versions.
+speaker 1: If I misjudge and put frequently needed data into the Archive tier, what problems would that cause?
+speaker 2: It gets pretty annoying - every time you need it you'd have to submit a retrieval request and wait, which is a poor experience. And frequent retrievals might actually cost more than just keeping it in the Standard tier, so tiering strategy needs to be planned ahead.
+speaker 1: So can these four storage services (Object, Block, File, Archive) collectively be viewed as one complete hot/cold tiering system?
+speaker 2: Yes, that's a good way to think of it - Standard tier handles hot data, Archive handles cold data, and block and file storage handle scenarios requiring mounted access. Together the four cover the vast majority of storage needs.

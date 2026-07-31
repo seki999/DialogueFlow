@@ -1,0 +1,8 @@
+speaker 1: We've used a Service already, but how does it actually route a request to a Pod under the hood?
+speaker 2: The whole chain works like this: cluster DNS resolves the Service name into a virtual IP, which is dedicated to that Service and stays stable.
+speaker 1: What happens once a request reaches that virtual IP?
+speaker 2: kube-proxy, running on each node, maintains a set of forwarding rules, redirecting traffic sent to that virtual IP toward one of the actual Pods.
+speaker 1: How does kube-proxy know which Pods are currently healthy and available?
+speaker 2: It relies on Endpoints, or the newer EndpointSlice objects, which continuously track the list of currently healthy Pods matching that Service.
+speaker 1: What does this design mean for application developers?
+speaker 2: It means applications only need to remember each other's Service name — they don't need to worry about when the underlying Pods get recreated or how their IPs change, since all that detail is hidden behind the Service abstraction.

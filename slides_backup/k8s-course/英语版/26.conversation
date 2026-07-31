@@ -1,0 +1,10 @@
+speaker 1: After going through all of this, can you help me lay out the whole knowledge map?
+speaker 2: Sure. Overall it breaks into five major sections: the basics section teaches you to build a cluster and get apps running; the configuration section teaches you to decouple config from the image; the stateless and stateful application sections use real cases — the guestbook, WordPress, Cassandra, ZooKeeper — to reinforce architectural thinking; the services and security section clarifies how traffic gets routed and hardened; and the cluster management section covers lower-level operational topics.
+speaker 1: Is there a common mistake a lot of people make after learning all this?
+speaker 2: A common pitfall is applying stateless practices directly to stateful systems like databases — for example, casually managing a database with a Deployment, and then all the data gets lost the moment it's recreated. That's exactly when you should use a StatefulSet instead.
+speaker 1: Any other details that tend to get overlooked?
+speaker 2: Yes — a lot of people think once they've set up a Service, they're done, but details like preserving source IP and traffic distribution policy matter just as much in production.
+speaker 1: After finishing this course, which direction is worth going deeper into next?
+speaker 2: It depends on your actual needs. If you care about stability and troubleshooting, go deeper into observability and logging. If you care about network security, look into network policies specifically. If you're interested in low-level scheduling, check out the scheduling framework and resource management.
+speaker 1: If you could sum up the whole course in one sentence, how would you put it?
+speaker 2: The core idea of Kubernetes is this — you describe the state you want, and all the dirty work of scheduling, recovery, and scaling gets handled by the system itself.

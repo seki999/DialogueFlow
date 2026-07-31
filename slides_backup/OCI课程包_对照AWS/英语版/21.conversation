@@ -1,0 +1,10 @@
+speaker 1: For Load Balancer, what do Layer 7 and Layer 4 each correspond to on AWS?
+speaker 2: Layer 7 maps to ALB, doing path- or domain-based routing; Layer 4 maps to NLB, doing lower-level, higher-performance forwarding.
+speaker 1: Any difference in how they're used?
+speaker 2: Usage is basically the same - configuring backend pools, health checks, listener ports are all shared concepts.
+speaker 1: You mentioned earlier OCI's Layer 4 load balancer is free?
+speaker 2: Right, OCI's Network Load Balancer is currently listed as free per the official pricing page - unlike AWS NLB, which bills hourly plus by traffic. That said, pricing policy can change, so it's worth confirming on the latest official pricing page before use.
+speaker 1: If it's free, does that mean for simple scenarios I should just use the Layer 4 load balancer instead of paying for Layer 7?
+speaker 2: Depends on the scenario. If you only need port forwarding without path-based routing rules, Layer 4 is indeed the more economical choice. But if you need to route by URL path to different backend services, you'll still need Layer 7.
+speaker 1: Can health check configuration items be directly reused from my AWS experience?
+speaker 2: Basically yes - health check intervals, failure thresholds, backend weighting are all universal load balancer design concepts, just with different configuration screens and parameter names.

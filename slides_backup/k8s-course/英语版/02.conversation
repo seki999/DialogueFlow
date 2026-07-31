@@ -1,0 +1,8 @@
+speaker 1: Whenever I hear "Kubernetes cluster" I picture a pile of machines, but how exactly is the work divided among them?
+speaker 2: A cluster splits into two parts: the control plane, which makes decisions, and the worker nodes, which actually run your containers.
+speaker 1: What roles exist inside the control plane?
+speaker 2: Mainly the API Server, which is the unified entry point for every operation; the scheduler, which decides which node a newly created Pod should run on; and the controller manager, which continuously nudges the cluster toward the state you want.
+speaker 1: And on the worker node side?
+speaker 2: Each node runs a component called kubelet, which receives instructions from the control plane and is responsible for actually starting, monitoring, and stopping containers on that machine.
+speaker 1: Do I need to build a whole complicated system like this just to learn?
+speaker 2: Not at all. Learning environments typically use Minikube, which can simulate a fully functional small cluster on your own computer using a VM or container, making it easy to practice.

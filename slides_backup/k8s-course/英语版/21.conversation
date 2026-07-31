@@ -1,0 +1,8 @@
+speaker 1: The cluster already has a unified security standard set at the cluster level — why would we still need to configure things per namespace?
+speaker 2: Because different teams and workloads vary a lot in practice — a one-size-fits-all policy either isn't strict enough for high-security workloads, or ends up blocking legacy systems that can't yet be remediated.
+speaker 1: How do you actually configure a specific namespace separately?
+speaker 2: You apply a specific label to that namespace, specifying which security level to use — that setting overrides the cluster-level default.
+speaker 1: In real projects, how are these tiers typically assigned?
+speaker 2: A common pattern is using the strictest Restricted tier in production and a moderate Baseline in testing, balancing flexibility against risk control.
+speaker 1: What if a legacy system temporarily can't meet the strict standard?
+speaker 2: You can put it in a namespace using Privileged or Baseline for now, while drafting a remediation plan to gradually migrate it toward a stricter standard.

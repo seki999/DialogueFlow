@@ -1,0 +1,10 @@
+speaker 1: Storage should be the easiest category to map, since the concepts are pretty much the same everywhere.
+speaker 2: True. The four services map essentially one-to-one: Object Storage to S3, Block Volumes to EBS, File Storage to EFS, and Archive Storage to Glacier.
+speaker 1: Of these four, which one gets used the most?
+speaker 2: Just like AWS, Object Storage (mapping to S3) is usually the most widely used - it's cheap, can directly host static assets, and also serves as the foundation for data lakes.
+speaker 1: Does OCI emphasize any particular differentiator in storage?
+speaker 2: Yes, the one Oracle brings up often is egress traffic pricing - the cost of moving data out of the cloud. Officially, it's claimed to be notably lower than mainstream cloud vendors.
+speaker 1: What kind of workloads does this matter most for?
+speaker 2: Things like CDN origin serving, heavy video/file downloads, or cross-cloud data syncing - egress cost is a significant line item there, and that's where OCI's advantage becomes more pronounced.
+speaker 1: So should we go through these four storage services one by one in the order shown?
+speaker 2: Yes, let's start with the most commonly used one, Object Storage.

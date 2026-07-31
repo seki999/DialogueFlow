@@ -1,0 +1,8 @@
+speaker 1: Swap memory sounds like a fairly low-level topic — what does it have to do with Kubernetes?
+speaker 2: If a node has swap memory enabled, it can provide an extra buffer when physical memory is tight, but it also affects how the scheduler judges resource availability, so Kubernetes has specific guidance on how to configure swap memory.
+speaker 1: Is enabling swap memory basically all upside?
+speaker 2: No — swap brings extra performance overhead, and traditionally Kubernetes' support for swap memory has been fairly conservative, so it needs careful evaluation before you decide to enable it.
+speaker 1: And what does standalone mode for kubelet mean?
+speaker 2: Normally kubelet connects to the control plane's API Server to receive scheduling instructions; in standalone mode, it's completely detached from that connection and is only responsible for managing manually specified containers on that one machine.
+speaker 1: What scenarios call for this standalone mode?
+speaker 2: A fairly typical one is edge devices, or some specialized local environments that may not have a full control plane at all — there, you just need kubelet to manage containers on its own.

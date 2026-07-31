@@ -1,0 +1,8 @@
+speaker 1: ZooKeeper is also a distributed system like Cassandra — how is running it different?
+speaker 2: The biggest difference is that ZooKeeper is especially sensitive to the concept of a "majority" — it must guarantee that more than half the nodes are alive at all times, or the whole system becomes unavailable.
+speaker 1: So what should you pay special attention to when deploying it?
+speaker 2: First, the node count is usually odd, like 3 or 5, so calculating the majority is unambiguous.
+speaker 1: Besides the count, are there other ways to guarantee availability?
+speaker 2: A PodDisruptionBudget is used to limit how many ZooKeeper nodes can be evicted at once during cluster maintenance, preventing a single operation from wiping out the majority.
+speaker 1: Could all the nodes end up crammed onto the same physical machine, so if it fails, everything goes down?
+speaker 2: This case also uses anti-affinity rules, trying to keep different ZooKeeper nodes scheduled onto different physical machines, reducing the impact of any single point of failure.

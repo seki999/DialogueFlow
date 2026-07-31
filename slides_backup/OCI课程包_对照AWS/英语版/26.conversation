@@ -1,0 +1,14 @@
+speaker 1: Is identity and access management conceptually identical to AWS IAM?
+speaker 2: The structure is similar but organized differently - this is one of the areas we mentioned earlier with the biggest divergence.
+speaker 1: Where specifically does it differ?
+speaker 2: AWS typically isolates via multiple accounts plus Organizations - a production account, a test account, separated out. OCI does this within a single tenancy, using a concept called Compartment in a tree structure.
+speaker 1: What does Compartment roughly correspond to?
+speaker 2: You could compare it to "the isolation effect achieved through multiple AWS accounts plus Organizations," but OCI doesn't need to split into multiple physical accounts - it divides logical compartments within one tenancy.
+speaker 1: How are policies written - also in JSON?
+speaker 2: No, OCI's policy statements read closer to natural language, something like "Allow group Admins to manage all-resources in tenancy."
+speaker 1: Does that make it more readable than AWS IAM's JSON policy documents?
+speaker 2: Right, readability is genuinely better - you can tell at a glance "who has what permission over what resource."
+speaker 1: So does that mean OCI's access management is simpler and easier to use than AWS IAM?
+speaker 2: For simple scenarios it's certainly more intuitive, but for complex, fine-grained permission control, AWS IAM's policy language offers more flexibility. It's a trade-off, not an absolute "one is better."
+speaker 1: If I'm migrating from a multi-account AWS architecture, what's the rough mapping approach?
+speaker 2: Roughly, map each AWS account to a Compartment - the isolation logic that used to happen at the account level becomes a layer in the Compartment tree structure.
