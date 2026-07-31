@@ -151,13 +151,29 @@ FFMPEG_AUDIO_DEVICE = "这里填你的设备全名"
 ```
 slides/
   01.md
-  01.conversation
+  01.conversation.zh
+  01.conversation.ja
+  01.conversation.en
   02.md
-  02.conversation
+  02.conversation.zh
+  02.conversation.ja
+  02.conversation.en
   ...
 ```
 
-`NN.conversation` 格式示例:
+`NN.md`(流程图)是三种语言共用的,不需要分语言准备。
+`NN.conversation.<lang>` 是每种语言各一份对话文件,`<lang>` 为
+`zh`(汉语)/ `ja`(日语)/ `en`(英语)。
+
+不带语言后缀的 `NN.conversation` 是"通用兜底文件":页面上选了某种
+语言时,如果没有对应的 `NN.conversation.<lang>`,就会退回读取
+`NN.conversation` 的内容,并用选中语言的 TTS 音色朗读它 —— 注意这
+**不是翻译**,只是用日语/英语的声音去读这份文件里原本的文字,发音
+会比较奇怪,只建议临时用来验证流程,正式产出建议还是为每种语言准备
+对应的 `NN.conversation.<lang>`。两者都没有时,那一组才会真正跳过
+语音和字幕(命令行会打印警告)。
+
+`NN.conversation.<lang>`(或不带后缀的 `NN.conversation`)格式示例:
 
 ```
 speaker 1: 这是第一句话
@@ -174,6 +190,11 @@ flowchart TD
     A[开始] --> B[结束]
 ```
 </pre>
+
+在页面"素材一览"里,点"开始录制"前可以选择本次录制用哪种语言
+(汉语 / 日语 / 英语,默认汉语);选定后整段视频的语音和字幕都会
+用这个语言(语音使用 `config.py` 里 `VOICE_MAP` 对应语言下的
+edge-tts 声音)。
 
 项目里已经放了两组示例(01、02),可以先直接跑一遍确认流程通了,
 再替换成你自己的素材。

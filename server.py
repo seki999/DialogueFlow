@@ -1,8 +1,10 @@
 import re
 import threading
 import markdown as md_lib
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
+
+import config
 
 MERMAID_BLOCK_RE = re.compile(r"```mermaid\s*\n(.*?)```", re.DOTALL)
 
@@ -32,8 +34,8 @@ def render_md_to_html(md_text):
 def create_app(slides, on_start):
     """
     slides: loader.load_slide_pairs() 返回的已排序列表
-    on_start: 点击"开始录制"后要执行的函数(无参数),会在后台线程运行,
-              避免阻塞 Flask 的请求处理线程。
+    on_start: 点击"开始录制"后要执行的函数(参数为选中的语言代码,如 "zh"),
+              会在后台线程运行,避免阻塞 Flask 的请求处理线程。
     """
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "local-only-secret"
@@ -49,12 +51,18 @@ def create_app(slides, on_start):
                 {"index": s["index"], "html": rendered_slides[i]}
                 for i, s in enumerate(slides)
             ],
+            languages=config.LANGUAGES,
+            default_language=config.DEFAULT_LANGUAGE,
         )
 
     @app.route("/api/start", methods=["POST"])
     def api_start():
-        threading.Thread(target=on_start, daemon=True).start()
-        return jsonify({"status": "started"})
+        data = request.get_json(silent=True) or {}
+        lang = data.get("lang")
+        if lang not in config.LANGUAGES:
+            lang = config.DEFAULT_LANGUAGE
+        threading.Thread(target=on_start, args=(lang,), daemon=True).start()
+        return jsonify({"status": "started", "lang": lang})
 
     def show_slide(slide_pos):
         socketio.emit("show_slide", {
@@ -66,9 +74,10 @@ def create_app(slides, on_start):
     def show_done():
         socketio.emit("all_done", {})
 
-    def show_caption(speaker, text):
+    def show_caption(lang, speaker, text):
         # text 为空字符串时表示清空字幕(切换 slide / 全部播完时用)
-        socketio.emit("show_caption", {"speaker": speaker, "text": text})
+        label = config.SPEAKER_LABELS.get(lang, {}).get(speaker, "")
+        socketio.emit("show_caption", {"speaker": speaker, "text": text, "label": label})
 
     # 把回调方法挂在 app 上,方便 main.py 里直接调用
     app.show_slide = show_slide

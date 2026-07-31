@@ -12,11 +12,36 @@ OUTPUT_FILENAME_PREFIX = "lesson_video"
 # TTS 缓存目录(生成过的语音会缓存在这里,避免重复调用 edge-tts)
 TTS_CACHE_DIR = os.path.join(BASE_DIR, "tts_cache")
 
-# speaker 编号 -> edge-tts voice 名称的映射
+# 支持的语言(代码 -> 页面上显示的名称),顺序即页面选项顺序
+LANGUAGES = {
+    "zh": "汉语",
+    "ja": "日语",
+    "en": "英语",
+}
+DEFAULT_LANGUAGE = "zh"
+
+# 字幕里说话人标签的多语言文案
+SPEAKER_LABELS = {
+    "zh": {"1": "说话人 1", "2": "说话人 2"},
+    "ja": {"1": "話者 1", "2": "話者 2"},
+    "en": {"1": "Speaker 1", "2": "Speaker 2"},
+}
+
+# speaker 编号 -> edge-tts voice 名称的映射,按语言分开
 # speaker 1 = 女声, speaker 2 = 男声(固定映射)
 VOICE_MAP = {
-    "1": "zh-CN-XiaoxiaoNeural",  # 女声
-    "2": "zh-CN-YunxiNeural",     # 男声
+    "zh": {
+        "1": "zh-CN-XiaoxiaoNeural",  # 女声
+        "2": "zh-CN-YunxiNeural",     # 男声
+    },
+    "ja": {
+        "1": "ja-JP-NanamiNeural",    # 女声
+        "2": "ja-JP-KeitaNeural",     # 男声
+    },
+    "en": {
+        "1": "en-US-JennyNeural",     # 女声
+        "2": "en-US-GuyNeural",       # 男声
+    },
 }
 
 # 本地 Web 服务

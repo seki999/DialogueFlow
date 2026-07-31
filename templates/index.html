@@ -36,6 +36,15 @@
   }
   #start-btn:hover { background: #1d4ed8; }
   #status { margin-top: 16px; color: #555; }
+  #lang-select {
+    margin: 16px 0;
+    font-size: 16px;
+  }
+  #lang-select label {
+    margin-right: 20px;
+    cursor: pointer;
+  }
+  #lang-select input { margin-right: 6px; }
   .mermaid { text-align: center; }
   #done-banner {
     font-size: 32px;
@@ -76,6 +85,16 @@
 <div id="overview">
   <h1>素材一览(共 {{ slides_preview|length }} 组)</h1>
   <p>确认下面内容无误后,请把浏览器窗口<strong>最大化 / 按 F11 全屏</strong>,再点击"开始录制"。</p>
+
+  <div id="lang-select">
+    <strong>录制语言:</strong>
+    {% for code, name in languages.items() %}
+      <label>
+        <input type="radio" name="lang" value="{{ code }}" {% if code == default_language %}checked{% endif %}>{{ name }}
+      </label>
+    {% endfor %}
+  </div>
+
   <button id="start-btn">开始录制</button>
   <div id="status"></div>
 
@@ -99,9 +118,15 @@
   }
 
   document.getElementById("start-btn").addEventListener("click", () => {
+    const langInput = document.querySelector('input[name="lang"]:checked');
+    const lang = langInput ? langInput.value : "{{ default_language }}";
     document.getElementById("status").innerText = "已开始录制,请勿关闭本窗口或切换到其他窗口...";
     document.getElementById("start-btn").disabled = true;
-    fetch("/api/start", { method: "POST" });
+    fetch("/api/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lang: lang }),
+    });
   });
 
   socket.on("show_slide", (data) => {
@@ -123,7 +148,7 @@
     const isSpeaker2 = data.speaker === "2";
     cap.className = isSpeaker2 ? "speaker-2" : "speaker-1";
     cap.innerHTML =
-      `<span class="caption-name">${isSpeaker2 ? "说话人 2" : "说话人 1"}</span>` +
+      `<span class="caption-name">${data.label}</span>` +
       `<span class="caption-text">${data.text}</span>`;
     cap.style.display = "block";
   });
