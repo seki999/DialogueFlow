@@ -1,0 +1,8 @@
+speaker 1: Cassandra 和前面的 WordPress 案例比，复杂在哪？
+speaker 2: Cassandra 本身就是一个分布式数据库，节点之间需要互相发现、互相同步数据，这正好是 StatefulSet 最擅长处理的场景。
+speaker 1: 节点之间是怎么找到彼此的？
+speaker 2: 靠一个种子节点的概念，新节点启动时会去连接种子节点，从它那里获取整个集群的拓扑信息。
+speaker 1: StatefulSet 在这里具体发挥了什么作用？
+speaker 2: 它保证每个 Cassandra 节点都有固定的名字和专属的存储，配合无头 Service，节点之间可以用稳定的地址直接通信。
+speaker 1: 如果想扩大这个 Cassandra 集群怎么办？
+speaker 2: 很简单，只要增加 StatefulSet 的副本数，新节点起来后会自动连接种子节点，把数据同步过去，加入整个集群。

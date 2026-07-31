@@ -1,0 +1,8 @@
+speaker 1: 之前学的 Deployment 好像不太适合数据库这类应用？
+speaker 2: 对，Deployment 里的 Pod 名字和身份是可以互换的，但数据库这类应用往往需要固定的身份和各自独立的数据，这时候要用 StatefulSet。
+speaker 1: StatefulSet 具体解决了什么问题？
+speaker 2: 它保证每个 Pod 有固定且有序的名字，比如 pod-0、pod-1、pod-2，而且每个 Pod 绑定自己专属的持久卷，重建之后数据还在原来那份卷上。
+speaker 1: 创建和删除 Pod 的顺序重要吗？
+speaker 2: 很重要，StatefulSet 会按顺序一个一个创建或删除，避免像分布式数据库这种对启动顺序敏感的系统出现问题。
+speaker 1: 用 StatefulSet 是不是还需要额外配置什么？
+speaker 2: 需要搭配一个无头 Service，它不做负载均衡，而是让每个 Pod 都能通过固定的域名被单独访问到。

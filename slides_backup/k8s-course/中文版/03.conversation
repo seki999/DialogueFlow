@@ -1,0 +1,8 @@
+speaker 1: 第一次接触 Kubernetes，是不是要先申请云服务器之类的资源？
+speaker 2: 不用，官方教程的入门方式是 Minikube，只要在自己电脑上装好，运行 minikube start 就能起一个本地的小集群。
+speaker 1: 起来之后我怎么知道它是不是正常工作了？
+speaker 2: 可以用 kubectl cluster-info 看一下，如果能看到控制面的地址信息，说明集群已经准备好接受你的操作了。
+speaker 1: 有没有更直观的方式看集群里发生了什么？
+speaker 2: 有，运行 minikube dashboard 会打开一个网页版的可视化界面，能看到节点、Pod 这些资源的状态。
+speaker 1: 这一步是不是后面所有教程的基础？
+speaker 2: 是的，不管后面学部署、扩缩还是安全策略，都要先有一个能用的集群，Minikube 就是这门课程反复用到的练习场。

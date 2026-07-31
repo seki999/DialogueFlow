@@ -1,0 +1,8 @@
+speaker 1: 应用要发新版本了，是不是得先停掉旧版本再启动新的？
+speaker 2: 不需要，Kubernetes 默认支持滚动更新，会逐个把旧版本的 Pod 替换成新版本，中间服务始终可用。
+speaker 1: 怎么触发这个更新？
+speaker 2: 常用的是 kubectl set image，把 Deployment 里容器使用的镜像改成新版本，控制器会自动开始滚动替换。
+speaker 1: 更新过程中怎么知道进度到哪了？
+speaker 2: 可以用 kubectl rollout status 实时查看，能看到还剩多少个 Pod 没更新完。
+speaker 1: 万一新版本有问题，能不能马上退回去？
+speaker 2: 可以，kubectl rollout undo 会把 Deployment 回滚到上一个版本，同样是滚动的方式安全切回去。

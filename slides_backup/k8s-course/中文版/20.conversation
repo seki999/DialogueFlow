@@ -1,0 +1,8 @@
+speaker 1: Kubernetes 里说的 Pod 安全标准，是指什么？
+speaker 2: 它是官方定义的几档安全基线，分别叫 Privileged、Baseline、Restricted，级别依次收紧。
+speaker 1: 这几档具体有什么区别？
+speaker 2: Privileged 基本不做限制，Baseline 会挡掉一些明显有风险的配置，比如以特权模式运行容器，Restricted 则严格遵循目前公认的加固最佳实践。
+speaker 1: 在集群级别配置是什么意思？
+speaker 2: 就是给整个集群设一个默认策略，所有没有单独配置的名字空间都会自动套用这个统一的安全级别。
+speaker 1: 如果有 Pod 不符合要求，会怎么样？
+speaker 2: 由准入控制器在 Pod 创建的那一刻做校验，可以配置成直接拒绝创建，也可以配置成只记录警告或审计日志，具体取决于你选择的执行模式。

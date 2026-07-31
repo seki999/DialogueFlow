@@ -1,0 +1,8 @@
+speaker 1: 集群有了，怎么把我写的应用真正跑起来？
+speaker 2: 最常见的方式是创建一个 Deployment，它描述你想运行什么镜像、运行几份。
+speaker 1: 具体怎么创建？
+speaker 2: 最简单是用 kubectl create deployment 加上名字和镜像地址，一条命令就能生成这个 Deployment 对象。
+speaker 1: 创建之后是不是就直接跑起来了？
+speaker 2: 对，Deployment 控制器会持续工作，负责创建出对应数量的 Pod，再由调度器把 Pod 分配到某个节点上，最终容器才会真正启动。
+speaker 1: 如果我想看看现在集群里有哪些 Deployment 怎么办？
+speaker 2: 用 kubectl get deployments 就能列出来，能看到名字、期望副本数、当前可用副本数这些信息。

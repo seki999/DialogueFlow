@@ -1,0 +1,8 @@
+speaker 1: 如果某天流量突然变大，应用只有一个副本肯定扛不住，怎么办？
+speaker 2: 直接扩容就行，扩缩容本质上就是修改 Deployment 里期望的副本数量。
+speaker 1: 具体用什么命令？
+speaker 2: kubectl scale deployment 加上名字，再指定 replicas 数量，比如从 1 改成 5。
+speaker 1: 新增的这些副本，Service 那边要不要重新配置？
+speaker 2: 不需要，因为 Service 是靠标签选择器动态匹配 Pod 的，只要新 Pod 带着同样的标签，会自动被纳入流量分发范围。
+speaker 1: 那如果流量降下去了，想缩容呢？
+speaker 2: 同样用 scale 命令改小数字就行，Kubernetes 会安全地终止多余的 Pod，整个过程不需要改动应用代码本身。

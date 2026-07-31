@@ -1,0 +1,8 @@
+speaker 1: GPU 这种特殊硬件，Kubernetes 是怎么分配给 Pod 使用的？
+speaker 2: 比较新的方式是 DRA，也就是动态资源分配，它比早期的设备插件机制更灵活，能支持更复杂的分配需求。
+speaker 1: 用 DRA 之前需要做什么准备？
+speaker 2: 需要先在集群里安装对应硬件厂商提供的设备驱动，让 Kubernetes 能够识别和管理这些设备资源。
+speaker 1: Pod 是怎么表达自己需要什么样的设备的？
+speaker 2: 通过 ResourceClaim 对象，里面详细描述这个 Pod 具体需要什么类型、什么规格的设备。
+speaker 1: 调度器拿到这个 ResourceClaim 之后怎么工作？
+speaker 2: 调度器会去找集群里哪些节点上有满足条件的设备资源，把 Pod 调度到合适的节点，并完成设备的实际绑定分配。

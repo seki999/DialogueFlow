@@ -1,0 +1,8 @@
+speaker 1: 什么样的应用算是无状态应用？
+speaker 2: 简单说就是它不依赖保存在本地磁盘上的数据，随便重建一个新副本，功能完全一样，不会丢东西。
+speaker 1: 这类应用怎么让集群外面的人访问到？
+speaker 2: 默认的 Service 只能在集群内部访问，要对外暴露，得用类型是 LoadBalancer 或者 NodePort 的 Service。
+speaker 1: LoadBalancer 类型具体是怎么工作的？
+speaker 2: 在云环境里，创建这种类型的 Service 会自动帮你申请一个云厂商提供的负载均衡器，分配一个外部可访问的 IP。
+speaker 1: 那在本地用 Minikube 练习，是不是没有真正的云负载均衡器？
+speaker 2: 对，本地环境需要用类似 minikube service 这样的命令，让 Minikube 帮你打通一条能从本机访问的路径来模拟外部访问。

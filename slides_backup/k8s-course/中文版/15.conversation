@@ -1,0 +1,8 @@
+speaker 1: WordPress 和 MySQL 这种传统应用，搬到 Kubernetes 上要注意什么？
+speaker 2: 关键是数据持久化，网站文件和数据库数据都不能因为 Pod 重建就丢失，所以两者都要配上各自的持久卷。
+speaker 1: 数据库密码这种敏感信息怎么处理？
+speaker 2: 不要写在明文的配置文件里，用 Secret 对象保存，Pod 再通过环境变量的方式安全地引用它。
+speaker 1: WordPress 怎么知道去哪里连接 MySQL？
+speaker 2: 同样通过环境变量，把 MySQL 对应 Service 的名字传给 WordPress，WordPress 内部直接用这个地址作为数据库主机名。
+speaker 1: 这两个组件是用 StatefulSet 还是普通 Deployment？
+speaker 2: 这个教程用的是单副本的 Deployment 加持久卷的方式，比完整的 StatefulSet 简单，适合演示持久化的基本原理。

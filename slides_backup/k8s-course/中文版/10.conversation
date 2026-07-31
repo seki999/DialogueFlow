@@ -1,0 +1,10 @@
+speaker 1: 前面讲的 ConfigMap 概念挺清楚，官方教程里有没有一个具体例子？
+speaker 2: 有，就是用 ConfigMap 配置 Redis 这个教程，非常适合把前面学的东西串起来。
+speaker 1: 具体怎么做？
+speaker 2: 第一步先创建一个 ConfigMap，里面保存的是 redis.conf 这个配置文件的内容。
+speaker 1: 然后呢？
+speaker 2: 创建 Redis 的 Pod 时，把这个 ConfigMap 挂载成卷，挂到容器里 Redis 期望读取配置文件的目录。
+speaker 1: Redis 启动的时候知道要用这个自定义配置吗？
+speaker 2: 需要在启动命令里显式指定使用挂载路径下的那个配置文件，Redis 才会按照里面写的参数运行。
+speaker 1: 怎么确认真的生效了？
+speaker 2: 可以进入容器用 redis-cli，执行 config get 查询某个参数的当前值，和 ConfigMap 里写的对比一下就知道了。

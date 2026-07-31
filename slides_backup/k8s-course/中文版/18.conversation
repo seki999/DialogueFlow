@@ -1,0 +1,8 @@
+speaker 1: 之前只是用了 Service，但它内部到底是怎么把请求送到 Pod 上的？
+speaker 2: 整个链路是这样的：集群里的 DNS 会把 Service 名称解析成一个虚拟 IP，这个 IP 是 Service 专属、稳定不变的。
+speaker 1: 请求到了这个虚拟 IP之后呢？
+speaker 2: 每个节点上运行的 kube-proxy 组件维护着一套转发规则，会把发往这个虚拟 IP 的流量重新定向到某一个真实的 Pod 上。
+speaker 1: kube-proxy 怎么知道现在有哪些 Pod 是健康可用的？
+speaker 2: 靠 Endpoints 或者更新的 EndpointSlice 对象，它们会持续记录当前匹配这个 Service 的健康 Pod 列表。
+speaker 1: 这套设计对应用开发者来说意味着什么？
+speaker 2: 意味着应用之间只需要记住对方 Service 的名字，完全不用管背后的 Pod 什么时候重建、IP 怎么变化，这些细节全被 Service 这层抽象屏蔽掉了。

@@ -1,0 +1,8 @@
+speaker 1: 前面提到的 Pod，到底是什么，和容器是一回事吗？
+speaker 2: 不完全一样，Pod 是 Kubernetes 里最小的调度单元，里面可以装一个或多个共享网络和存储的容器。
+speaker 1: 我怎么知道现在集群里有哪些 Pod、状态怎么样？
+speaker 2: 用 kubectl get pods 就能看到列表，包括名字、状态是不是 Running，以及重启了多少次。
+speaker 1: 如果某个 Pod 一直起不来，怎么排查？
+speaker 2: 可以用 kubectl describe pod 加上它的名字，能看到详细的事件记录，比如镜像拉取失败、资源不够之类的原因。
+speaker 1: 那容器自己打印的日志怎么看？
+speaker 2: 用 kubectl logs 加 Pod 名字，就能看到容器标准输出的内容，这是排查应用层面问题最常用的手段。

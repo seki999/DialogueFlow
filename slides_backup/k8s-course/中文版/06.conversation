@@ -1,0 +1,8 @@
+speaker 1: 我的应用已经跑起来了，别人怎么访问它？
+speaker 2: 不能直接用 Pod 的 IP 去访问，因为 Pod 随时可能因为故障或更新被重建，IP 会变。
+speaker 1: 那怎么解决这个问题？
+speaker 2: 用 Service，它提供一个固定不变的访问入口，背后自动关联到当前所有健康的 Pod。
+speaker 1: Service 是怎么知道该关联哪些 Pod 的？
+speaker 2: 靠标签选择器，Service 配置里写明要找带有哪些标签的 Pod，凡是标签匹配的都会被纳入进来。
+speaker 1: 创建 Service 麻烦吗？
+speaker 2: 很简单，对已有的 Deployment 执行 kubectl expose deployment 就能一步生成对应的 Service，之后流量会自动分发到多个 Pod 副本上。
