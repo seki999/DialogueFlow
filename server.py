@@ -1,4 +1,6 @@
+import os
 import re
+import shutil
 import threading
 import markdown as md_lib
 from flask import Flask, render_template, request, jsonify
@@ -11,6 +13,37 @@ from loader import list_courses, resolve_course_dir, load_slide_pairs, build_cou
 MERMAID_BLOCK_RE = re.compile(r"```mermaid\s*\n(.*?)```", re.DOTALL)
 DETAILS_TAG_RE = re.compile(r"<details(?![^>]*\bmarkdown=)")
 TASK_ITEM_RE = re.compile(r"<li>\[([ xX])\]\s*(.*?)</li>", re.DOTALL)
+CODE_TEXT_BLOCK_RE = re.compile(
+    r'(<pre><code class="language-text">)(.*?)(</code></pre>)', re.DOTALL
+)
+BOLD_MARKER_RE = re.compile(r"\*\*(.+?)\*\*")
+
+
+def _clear_dir(path):
+    """删除 path 目录下的所有内容(文件/子文件夹),保留目录本身。
+    返回成功删除的条目数。目录不存在时直接返回 0,不报错。"""
+    removed = 0
+    if not os.path.isdir(path):
+        return removed
+    for name in os.listdir(path):
+        full = os.path.join(path, name)
+        try:
+            if os.path.isdir(full) and not os.path.islink(full):
+                shutil.rmtree(full)
+            else:
+                os.remove(full)
+            removed += 1
+        except OSError as e:
+            print(f"[警告] 删除 {full} 失败: {e}")
+    return removed
+
+
+def _bold_in_code_text(match):
+    opening, content, closing = match.groups()
+    # 只在 language-text 这种"例句代码块"里把 **word** 转成真正的加粗,
+    # 普通代码块(比如 language-python/bash)不动,避免误伤代码里字面的 **。
+    content = BOLD_MARKER_RE.sub(r"<strong>\1</strong>", content)
+    return opening + content + closing
 
 
 def _task_item(match):
@@ -22,12 +55,16 @@ def _task_item(match):
 def render_md_to_html(md_text):
     """把 markdown 转成 html,mermaid 代码块单独处理,转成 <pre class="mermaid">
     交给前端 mermaid.js 渲染成流程图。
-    另外两点处理:
+    另外三点处理:
     1. 给没有显式声明的 <details> 自动加上 markdown="1"(配合 md_in_html 扩展),
        否则 <details> 内部的 markdown(加粗、列表、行内代码等)不会被转换,
        只会原样输出成文字。
     2. 把 "- [ ] 选项" 这种任务列表语法转成真正可勾选的 <input type="checkbox">,
        markdown 库本身只会把它转成字面的 "[ ] 选项" 文字。
+    3. ` ```text ` 代码块(用来展示例句原文)里的 **加粗** 标记,markdown 本来
+       不会处理代码块内部的行内语法,所以之前会原样显示成两个星号;这里单独
+       把 language-text 代码块内的 **word** 转成真正的 <strong> 加粗,不影响
+       其他语言的代码块(比如里面字面就有 ** 的 Python/bash 代码不会被误改)。
     """
     md_text = DETAILS_TAG_RE.sub('<details markdown="1"', md_text)
 
@@ -48,6 +85,8 @@ def render_md_to_html(md_text):
         html = html.replace(placeholder, mermaid_html)
 
     html = TASK_ITEM_RE.sub(_task_item, html)
+
+    html = CODE_TEXT_BLOCK_RE.sub(_bold_in_code_text, html)
 
     return html
 
@@ -231,5 +270,22 @@ def create_app(slides_root, on_start):
             return jsonify({"status": "no_active_session"}), 400
         control.request_stop()
         return jsonify({"status": "stop_requested"})
+
+    @app.route("/api/clear", methods=["POST"])
+    def api_clear():
+        control = getattr(app, "current_control", None)
+        if control is not None and not control.is_stop_requested():
+            return jsonify({
+                "status": "error",
+                "message": "有正在进行的播放/录制,请先停止再清理,避免删掉正在写入的文件",
+            }), 400
+
+        cache_removed = _clear_dir(config.TTS_CACHE_DIR)
+        output_removed = _clear_dir(config.OUTPUT_DIR)
+        return jsonify({
+            "status": "cleared",
+            "tts_cache_removed": cache_removed,
+            "output_removed": output_removed,
+        })
 
     return app, socketio

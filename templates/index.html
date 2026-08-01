@@ -23,6 +23,24 @@
     padding: 6px 12px;
     margin-left: 8px;
   }
+  #clear-cache-row {
+    margin: 8px 0 16px;
+  }
+  #clear-cache-btn {
+    font-size: 14px;
+    padding: 6px 14px;
+    cursor: pointer;
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+  }
+  #clear-cache-btn:hover { background: #e5e7eb; color: #374151; }
+  #clear-cache-status {
+    margin-left: 12px;
+    font-size: 14px;
+    color: #6b7280;
+  }
   table {
     border-collapse: collapse;
     width: 100%;
@@ -84,9 +102,14 @@
     border-radius: 4px;
     font-size: 0.95em;
   }
+  pre:not(.mermaid) {
+    font-size: 1.3em;
+    line-height: 1.6;
+  }
   pre code {
     background: none;
     padding: 0;
+    font-size: 1em;
   }
   #stage {
     display: none;
@@ -165,6 +188,22 @@
     text-align: center;
     color: #16a34a;
   }
+  #restart-link {
+    text-align: center;
+    margin-top: 20px;
+  }
+  #restart-link a {
+    font-size: 18px;
+    color: #2563eb;
+    text-decoration: none;
+    padding: 8px 20px;
+    border: 1px solid #2563eb;
+    border-radius: 6px;
+  }
+  #restart-link a:hover {
+    background: #2563eb;
+    color: #fff;
+  }
   #caption {
     position: fixed;
     left: 50%;
@@ -231,6 +270,11 @@
     <strong>课程:</strong>
     <span id="course-levels"></span>
     <input type="hidden" id="course-value" value="{{ selected_course }}">
+  </div>
+
+  <div id="clear-cache-row">
+    <button id="clear-cache-btn">清空缓存和视频</button>
+    <span id="clear-cache-status"></span>
   </div>
 
   <h1>素材一览(共 {{ slides_preview|length }} 组)</h1>
@@ -485,9 +529,18 @@
     cap.style.display = "block";
   });
 
+  function homeUrl() {
+    const course = document.getElementById("course-value").value;
+    const url = new URL(window.location.origin + window.location.pathname);
+    if (course) url.searchParams.set("course", course);
+    return url.toString();
+  }
+
   socket.on("all_done", () => {
     const content = document.getElementById("stage-content");
-    content.innerHTML = '<div id="done-banner">播放完毕</div>';
+    content.innerHTML =
+      '<div id="done-banner">播放完毕</div>' +
+      '<div id="restart-link"><a href="' + homeUrl() + '">返回首页,重新开始</a></div>';
     document.getElementById("caption").style.display = "none";
     document.getElementById("progress").style.display = "none";
     document.getElementById("run-controls").style.display = "none";
@@ -495,7 +548,9 @@
 
   socket.on("stopped", () => {
     const content = document.getElementById("stage-content");
-    content.innerHTML = '<div id="done-banner">已手动停止</div>';
+    content.innerHTML =
+      '<div id="done-banner">已手动停止</div>' +
+      '<div id="restart-link"><a href="' + homeUrl() + '">返回首页,重新开始</a></div>';
     document.getElementById("caption").style.display = "none";
     document.getElementById("progress").style.display = "none";
     document.getElementById("run-controls").style.display = "none";
@@ -514,6 +569,25 @@
     if (!confirm("确定要停止吗?已经播放/录制的部分会保留。")) return;
     fetch("/api/stop", { method: "POST" });
     document.getElementById("stop-btn").disabled = true;
+  });
+
+  document.getElementById("clear-cache-btn").addEventListener("click", () => {
+    if (!confirm("确定要清空吗?这会删除 tts_cache 里所有缓存的语音,以及 output 里所有已经录好的视频,不可恢复。")) return;
+    const statusEl = document.getElementById("clear-cache-status");
+    statusEl.textContent = "正在清理...";
+    fetch("/api/clear", { method: "POST" })
+      .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok) {
+          statusEl.textContent = data.message || "清理失败";
+          return;
+        }
+        statusEl.textContent =
+          `已清空:语音缓存 ${data.tts_cache_removed} 项,视频 ${data.output_removed} 项`;
+      })
+      .catch(() => {
+        statusEl.textContent = "清理失败,请检查程序是否还在运行";
+      });
   });
 </script>
 
