@@ -14,6 +14,15 @@
   }
   #overview { padding: 24px 40px; }
   #overview h2 { margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 16px; }
+  #course-select {
+    margin: 16px 0;
+    font-size: 16px;
+  }
+  #course-select select {
+    font-size: 16px;
+    padding: 6px 12px;
+    margin-left: 8px;
+  }
   table {
     border-collapse: collapse;
     width: 100%;
@@ -218,6 +227,17 @@
 <body>
 
 <div id="overview">
+  <div id="course-select">
+    <strong>课程:</strong>
+    <select id="course-picker">
+      {% for c in courses %}
+        <option value="{{ c }}" {% if c == selected_course %}selected{% endif %}>
+          {{ "(根目录默认素材)" if c == "." else c.replace("/", " › ") }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
   <h1>素材一览(共 {{ slides_preview|length }} 组)</h1>
   <p>确认下面内容无误后,请把浏览器窗口<strong>最大化 / 按 F11 全屏</strong>,选好下面的模式/语言/章节后点击"开始"。</p>
 
@@ -298,6 +318,10 @@
     mermaid.run({ nodes: el.querySelectorAll(".mermaid") });
   }
 
+  // 素材一览页面里每组预览的流程图也要渲染,之前只在录制/播放画面里调用过,
+  // 导致"素材一览"里的 mermaid 代码块一直只显示原始文字,没有画成图。
+  renderMermaidIn(document.getElementById("overview"));
+
   function bindSlider(sliderId, outputId, suffix) {
     const slider = document.getElementById(sliderId);
     const output = document.getElementById(outputId);
@@ -310,7 +334,14 @@
   bindSlider("volume-slider", "volume-output", "%");
   bindSlider("pitch-slider", "pitch-output", "Hz");
 
+  document.getElementById("course-picker").addEventListener("change", (e) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("course", e.target.value);
+    window.location.href = url.toString();
+  });
+
   document.getElementById("start-btn").addEventListener("click", () => {
+    const course = document.getElementById("course-picker").value;
     const modeInput = document.querySelector('input[name="mode"]:checked');
     const mode = modeInput ? modeInput.value : "{{ default_mode }}";
     const langInput = document.querySelector('input[name="lang"]:checked');
@@ -329,7 +360,7 @@
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        mode: mode, lang: lang, rate: rate, volume: volume, pitch: pitch,
+        course: course, mode: mode, lang: lang, rate: rate, volume: volume, pitch: pitch,
         start_index: startIndex, end_index: endIndex,
       }),
     });

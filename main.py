@@ -4,7 +4,7 @@ import webbrowser
 from datetime import datetime
 
 import config
-from loader import load_slide_pairs
+from loader import list_courses
 from tts_engine import synthesize
 from player import play_blocking
 from recorder import ScreenRecorder
@@ -19,11 +19,13 @@ def _fmt_hz(value):
     return f"{value:+d}Hz"
 
 
-def run_playback_and_recording(app, slides, lang, rate, volume, pitch, start_index, end_index, mode, control):
+def run_playback_and_recording(emitter, slides, lang, rate, volume, pitch, start_index, end_index, mode, control):
     """点击"开始"后执行的完整流程:
     (录屏模式下先开始录屏 ->) 依次显示每组 md 并播放选中语言的对应对话 ->
     全部结束后(录屏模式下停止录屏)。
     每次录屏都会生成一个带时间戳的新文件名,方便反复录制、互不覆盖。
+    emitter: server.SessionEmitter 实例,这次运行绑定的具体课程/语言对应的
+    slides 已经加载好了,通过它把画面/字幕/进度推送到浏览器。
     rate/volume/pitch: 页面滑块传来的整数值(百分比/Hz),这里统一转换成
     edge-tts 需要的字符串格式,例如 10 -> "+10%"。
     start_index/end_index: 只播放/录制编号在 [start_index, end_index] 区间内的章节
@@ -85,8 +87,8 @@ def run_playback_and_recording(app, slides, lang, rate, volume, pitch, start_ind
                 break
 
             segments = slide["segments_by_lang"].get(lang)
-            app.show_slide(pos, i, len(selected))
-            app.show_caption(lang, "", "")  # 切换到新一组时先清空上一组残留的字幕
+            emitter.show_slide(pos, i, len(selected))
+            emitter.show_caption(lang, "", "")  # 切换到新一组时先清空上一组残留的字幕
             print(f"[播放] 第 {slide['index']} 组 ({os.path.basename(slide['md_path'])})")
             control.sleep(config.SLIDE_SWITCH_DELAY)
 
@@ -104,7 +106,7 @@ def run_playback_and_recording(app, slides, lang, rate, volume, pitch, start_ind
                 if voice is None:
                     print(f"  [警告] 未知 speaker '{speaker}',跳过: {text}")
                     continue
-                app.show_caption(lang, speaker, text)  # 先显示这句字幕
+                emitter.show_caption(lang, speaker, text)  # 先显示这句字幕
                 audio_path = synthesize(
                     voice, text, config.TTS_CACHE_DIR,
                     rate=rate_str, volume=volume_str, pitch=pitch_str,
@@ -113,10 +115,10 @@ def run_playback_and_recording(app, slides, lang, rate, volume, pitch, start_ind
 
         if control.is_stop_requested():
             print("[提示] 已手动停止")
-            app.show_stopped()
+            emitter.show_stopped()
         else:
-            app.show_done()
-        app.show_caption(lang, "", "")  # 结束时清空字幕
+            emitter.show_done()
+        emitter.show_caption(lang, "", "")  # 结束时清空字幕
         control.sleep(1.5)
     finally:
         if recorder:
@@ -124,24 +126,28 @@ def run_playback_and_recording(app, slides, lang, rate, volume, pitch, start_ind
 
 
 def main():
-    slides = load_slide_pairs(config.SLIDES_DIR, list(config.LANGUAGES.keys()))
-    print(f"[加载] 共找到 {len(slides)} 组素材:")
-    for s in slides:
-        available = ", ".join(s["segments_by_lang"].keys())
-        print(f"  - 第 {s['index']} 组: {os.path.basename(s['md_path'])} / 可用语言: {available}")
+    courses = list_courses(config.SLIDES_DIR)
+    if not courses:
+        print(f"[错误] 在 {config.SLIDES_DIR} 目录下没有找到任何有效的课程文件夹或素材")
+        return
+    print(f"[加载] 在 {config.SLIDES_DIR} 下找到 {len(courses)} 个课程:")
+    for c in courses:
+        label = "(根目录)" if c == "." else c
+        print(f"  - {label}")
+    print("[提示] 具体每个课程有多少章节,会在浏览器里选好课程/语言后显示")
 
-    def on_start(lang, rate, volume, pitch, start_index, end_index, mode, control):
+    def on_start(emitter, slides, lang, rate, volume, pitch, start_index, end_index, mode, control):
         run_playback_and_recording(
-            app, slides, lang, rate, volume, pitch, start_index, end_index, mode, control
+            emitter, slides, lang, rate, volume, pitch, start_index, end_index, mode, control
         )
 
-    app, socketio = create_app(slides, on_start)
+    app, socketio = create_app(config.SLIDES_DIR, on_start)
 
     url = f"http://{config.WEB_HOST}:{config.WEB_PORT}/"
     webbrowser.open(url)
 
     print(f"[启动] 本地服务已启动: {url}")
-    print("[启动] 请在浏览器里确认素材一览,选好模式/语言/章节后点击开始")
+    print("[启动] 请在浏览器里选好课程/模式/语言/章节后点击开始")
     socketio.run(app, host=config.WEB_HOST, port=config.WEB_PORT)
 
 

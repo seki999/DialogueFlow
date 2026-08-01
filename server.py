@@ -6,6 +6,7 @@ from flask_socketio import SocketIO
 
 import config
 from control import PlaybackControl
+from loader import list_courses, resolve_course_dir, load_slide_pairs
 
 MERMAID_BLOCK_RE = re.compile(r"```mermaid\s*\n(.*?)```", re.DOTALL)
 DETAILS_TAG_RE = re.compile(r"<details(?![^>]*\bmarkdown=)")
@@ -51,25 +52,88 @@ def render_md_to_html(md_text):
     return html
 
 
-def create_app(slides, on_start):
+class SessionEmitter:
+    """每次点击"开始"都会创建一个新实例,绑定这一次运行实际用到的
+    slides/rendered_slides(取决于选中的课程+语言),避免多次运行之间
+    互相影响,也让课程/语言可以在每次运行时独立选择,不需要在服务启动时
+    写死。"""
+
+    def __init__(self, socketio, slides, rendered_slides):
+        self.socketio = socketio
+        self.slides = slides
+        self.rendered_slides = rendered_slides
+
+    def show_slide(self, slide_pos, progress_current, progress_total):
+        self.socketio.emit("show_slide", {
+            "html": self.rendered_slides[slide_pos],
+            "index": self.slides[slide_pos]["index"],
+            "progress_current": progress_current,
+            "progress_total": progress_total,
+        })
+
+    def show_done(self):
+        self.socketio.emit("all_done", {})
+
+    def show_stopped(self):
+        self.socketio.emit("stopped", {})
+
+    def show_caption(self, lang, speaker, text):
+        # text 为空字符串时表示清空字幕(切换 slide / 全部播完时用)
+        label = config.SPEAKER_LABELS.get(lang, {}).get(speaker, "")
+        self.socketio.emit("show_caption", {"speaker": speaker, "text": text, "label": label})
+
+
+def _load_course(slides_root, course):
+    """按课程标识解析出实际目录并加载 slides,失败返回 (None, None, 错误信息)。"""
+    course_dir = resolve_course_dir(slides_root, course)
+    if course_dir is None:
+        return None, None, f"课程 '{course}' 下没有找到任何有效的 .md 素材"
+    try:
+        slides = load_slide_pairs(course_dir, list(config.LANGUAGES.keys()))
+    except RuntimeError as e:
+        return None, None, str(e)
+    return slides, course_dir, None
+
+
+def create_app(slides_root, on_start):
     """
-    slides: loader.load_slide_pairs() 返回的已排序列表
-    on_start: 点击"开始录制"后要执行的函数(参数为选中的语言代码,如 "zh"),
+    slides_root: slides 根目录,里面可以直接放 NN.md,也可以嵌套任意层
+                 子文件夹,每个"直接放着 NN.md"的目录都会被列为一个课程
+    on_start: 点击"开始"后要执行的函数
+              (参数为 emitter, slides, lang, rate, volume, pitch,
+               start_index, end_index, mode, control),
               会在后台线程运行,避免阻塞 Flask 的请求处理线程。
     """
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "local-only-secret"
     socketio = SocketIO(app, cors_allowed_origins="*")
 
-    rendered_slides = [render_md_to_html(s["md_text"]) for s in slides]
-    slide_indices = [s["index"] for s in slides]  # 排序后的实际章节编号列表(可能不连续)
-    min_index = min(slide_indices)
-    max_index = max(slide_indices)
-
     @app.route("/")
     def index():
+        courses = list_courses(slides_root)
+        if not courses:
+            return (
+                f"在 {slides_root} 目录下没有找到任何有效的课程文件夹或素材,"
+                "请检查 slides 目录结构。",
+                500,
+            )
+
+        course = request.args.get("course") or courses[0]
+        if course not in courses:
+            course = courses[0]
+
+        # 课程标识已经具体到叶子目录了,预览页不需要再按语言重新解析
+        slides, _course_dir, error = _load_course(slides_root, course)
+        if error:
+            return f"加载课程 '{course}' 失败: {error}", 500
+
+        rendered_slides = [render_md_to_html(s["md_text"]) for s in slides]
+        slide_indices = [s["index"] for s in slides]
+
         return render_template(
             "index.html",
+            courses=courses,
+            selected_course=course,
             slides_preview=[
                 {"index": s["index"], "html": rendered_slides[i]}
                 for i, s in enumerate(slides)
@@ -83,8 +147,8 @@ def create_app(slides, on_start):
             pitch_default=config.TTS_PITCH_DEFAULT,
             pitch_range=config.TTS_PITCH_RANGE,
             slide_indices=slide_indices,
-            min_index=min_index,
-            max_index=max_index,
+            min_index=min(slide_indices),
+            max_index=max(slide_indices),
             playback_modes=config.PLAYBACK_MODES,
             default_mode=config.DEFAULT_MODE,
         )
@@ -92,9 +156,25 @@ def create_app(slides, on_start):
     @app.route("/api/start", methods=["POST"])
     def api_start():
         data = request.get_json(silent=True) or {}
+
+        courses = list_courses(slides_root)
+        if not courses:
+            return jsonify({"status": "error", "message": "没有可用的课程"}), 400
+        course = data.get("course")
+        if course not in courses:
+            course = courses[0]
+
         lang = data.get("lang")
         if lang not in config.LANGUAGES:
             lang = config.DEFAULT_LANGUAGE
+
+        slides, course_dir, error = _load_course(slides_root, course)
+        if error:
+            return jsonify({"status": "error", "message": error}), 400
+
+        rendered_slides = [render_md_to_html(s["md_text"]) for s in slides]
+        slide_indices = [s["index"] for s in slides]
+        min_index, max_index = min(slide_indices), max(slide_indices)
 
         def _clamp_int(value, default, value_range):
             try:
@@ -120,15 +200,17 @@ def create_app(slides, on_start):
         control = PlaybackControl()
         app.current_control = control  # 供 /api/pause /api/stop 操作当前这次运行
 
+        emitter = SessionEmitter(socketio, slides, rendered_slides)
+
         threading.Thread(
             target=on_start,
-            args=(lang, rate, volume, pitch, start_index, end_index, mode, control),
+            args=(emitter, slides, lang, rate, volume, pitch, start_index, end_index, mode, control),
             daemon=True,
         ).start()
         return jsonify({
-            "status": "started", "lang": lang, "rate": rate, "volume": volume,
-            "pitch": pitch, "start_index": start_index, "end_index": end_index,
-            "mode": mode,
+            "status": "started", "course": course, "course_dir": course_dir, "lang": lang,
+            "rate": rate, "volume": volume, "pitch": pitch,
+            "start_index": start_index, "end_index": end_index, "mode": mode,
         })
 
     @app.route("/api/pause", methods=["POST"])
@@ -146,30 +228,5 @@ def create_app(slides, on_start):
             return jsonify({"status": "no_active_session"}), 400
         control.request_stop()
         return jsonify({"status": "stop_requested"})
-
-    def show_slide(slide_pos, progress_current, progress_total):
-        socketio.emit("show_slide", {
-            "html": rendered_slides[slide_pos],
-            "index": slides[slide_pos]["index"],
-            "progress_current": progress_current,
-            "progress_total": progress_total,
-        })
-
-    def show_done():
-        socketio.emit("all_done", {})
-
-    def show_stopped():
-        socketio.emit("stopped", {})
-
-    def show_caption(lang, speaker, text):
-        # text 为空字符串时表示清空字幕(切换 slide / 全部播完时用)
-        label = config.SPEAKER_LABELS.get(lang, {}).get(speaker, "")
-        socketio.emit("show_caption", {"speaker": speaker, "text": text, "label": label})
-
-    # 把回调方法挂在 app 上,方便 main.py 里直接调用
-    app.show_slide = show_slide
-    app.show_done = show_done
-    app.show_stopped = show_stopped
-    app.show_caption = show_caption
 
     return app, socketio

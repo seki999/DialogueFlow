@@ -17,6 +17,12 @@
 不带语言后缀的 NN.conversation 是"通用兜底文件":对于任何一种语言,
 只要没有对应的 NN.conversation.<lang>,就会退回读取 NN.conversation
 (用该语言的 TTS 音色朗读这份文本内容,并不会做翻译)。
+
+课程文件夹(slides 根目录下的子文件夹,比如"OCI课程包_对照AWS"):
+不限制嵌套多少层,程序会递归扫描 slides 根目录下所有目录,只要某个
+目录里直接放着 NN.md,就会被列为一个可选的"课程"(用相对 slides 根
+目录的路径表示,比如 "OCI课程包_对照AWS/中文版"),在页面的课程下拉框
+里可以直接选到这一层,不需要再额外靠文件夹名猜语言。
 """
 
 import os
@@ -24,6 +30,44 @@ import re
 import glob
 
 CONV_LINE_RE = re.compile(r'^\s*speaker\s*([12])\s*[:\uFF1A]\s*(.+)$', re.IGNORECASE)
+
+ROOT_COURSE = "."  # 特殊值,代表"课程"就是 slides 根目录本身(自己直接放着 .md 的情况)
+
+
+def _has_md(path):
+    return bool(glob.glob(os.path.join(path, "*.md")))
+
+
+def list_courses(slides_root):
+    """递归扫描 slides_root,返回所有"直接放着 .md"的目录,不限制嵌套深度。
+    每一项用相对 slides_root 的路径表示(统一用 "/" 分隔,方便放进 URL
+    query 参数),slides_root 自己直接有 .md 的话用 ROOT_COURSE 表示。
+    按路径排序返回,ROOT_COURSE(如果存在)排最前面。
+    """
+    courses = []
+    if not os.path.isdir(slides_root):
+        return courses
+
+    for dirpath, dirnames, filenames in os.walk(slides_root):
+        dirnames.sort()  # 保证遍历顺序稳定,和最终排序无关但方便调试
+        if any(name.endswith(".md") for name in filenames):
+            rel = os.path.relpath(dirpath, slides_root)
+            courses.append(ROOT_COURSE if rel == "." else rel.replace(os.sep, "/"))
+
+    courses.sort(key=lambda c: (c != ROOT_COURSE, c))
+    return courses
+
+
+def resolve_course_dir(slides_root, course):
+    """把课程标识(list_courses() 返回的相对路径)解析成绝对目录;
+    course 已经是具体到"直接放着 NN.md"的那一层了,不需要再猜语言子文件夹。
+    找不到或者目录下确实没有 .md 时返回 None。
+    """
+    if course == ROOT_COURSE:
+        path = slides_root
+    else:
+        path = os.path.join(slides_root, *course.split("/"))
+    return path if os.path.isdir(path) and _has_md(path) else None
 
 
 def load_slide_pairs(slides_dir, languages):

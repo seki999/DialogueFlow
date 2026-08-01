@@ -42,8 +42,6 @@ class ScreenRecorder:
         self.avfoundation_device = avfoundation_device
         self.framerate = framerate
         self.process = None
-        self.log_path = os.path.splitext(output_path)[0] + "_log.txt"
-        self._log_file = None
 
     def _build_cmd(self):
         if IS_MACOS:
@@ -84,19 +82,15 @@ class ScreenRecorder:
         cmd = self._build_cmd()
         print("[录屏] 启动 ffmpeg:")
         print("  " + " ".join(cmd))
-        print(f"[录屏] ffmpeg 完整日志会写到: {self.log_path}")
 
-        # 把 ffmpeg 的输出(包括音频设备打开失败之类的警告)写到日志文件,
-        # 方便事后排查"有没有声音"这类问题。
-        self._log_file = open(self.log_path, "w", encoding="utf-8", errors="replace")
         popen_kwargs = {}
         if IS_WINDOWS:
             popen_kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
         self.process = subprocess.Popen(
             cmd,
             stdin=subprocess.PIPE,
-            stdout=self._log_file,
-            stderr=subprocess.STDOUT,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
             **popen_kwargs,
         )
 
@@ -112,9 +106,5 @@ class ScreenRecorder:
             self.process.kill()
             self.process.wait(timeout=10)
         finally:
-            if self._log_file:
-                self._log_file.close()
-                self._log_file = None
             print(f"[录屏] 已停止,文件保存在: {self.output_path}")
-            print(f"[录屏] 如果没有声音,先看一下日志: {self.log_path}")
             self.process = None
