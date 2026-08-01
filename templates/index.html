@@ -33,6 +33,52 @@
   tbody tr:nth-child(even) td {
     background: #fafafa;
   }
+  li.task-item {
+    list-style: none;
+  }
+  li.task-item label {
+    cursor: pointer;
+  }
+  li.task-item input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.2);
+    vertical-align: middle;
+  }
+  details {
+    margin: 12px 0;
+    padding: 4px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #f9fafb;
+  }
+  details summary {
+    cursor: pointer;
+    font-weight: bold;
+    color: #2563eb;
+    padding: 8px 0;
+  }
+  details[open] summary {
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 8px;
+  }
+  blockquote {
+    margin: 12px 0;
+    padding: 8px 16px;
+    border-left: 4px solid #93c5fd;
+    background: #eff6ff;
+    color: #374151;
+  }
+  blockquote p { margin: 0; }
+  code {
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.95em;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+  }
   #stage {
     display: none;
     min-height: 100vh;

@@ -8,11 +8,28 @@ import config
 from control import PlaybackControl
 
 MERMAID_BLOCK_RE = re.compile(r"```mermaid\s*\n(.*?)```", re.DOTALL)
+DETAILS_TAG_RE = re.compile(r"<details(?![^>]*\bmarkdown=)")
+TASK_ITEM_RE = re.compile(r"<li>\[([ xX])\]\s*(.*?)</li>", re.DOTALL)
+
+
+def _task_item(match):
+    checked = " checked" if match.group(1).lower() == "x" else ""
+    content = match.group(2)
+    return f'<li class="task-item"><label><input type="checkbox"{checked}> {content}</label></li>'
 
 
 def render_md_to_html(md_text):
     """把 markdown 转成 html,mermaid 代码块单独处理,转成 <pre class="mermaid">
-    交给前端 mermaid.js 渲染成流程图。"""
+    交给前端 mermaid.js 渲染成流程图。
+    另外两点处理:
+    1. 给没有显式声明的 <details> 自动加上 markdown="1"(配合 md_in_html 扩展),
+       否则 <details> 内部的 markdown(加粗、列表、行内代码等)不会被转换,
+       只会原样输出成文字。
+    2. 把 "- [ ] 选项" 这种任务列表语法转成真正可勾选的 <input type="checkbox">,
+       markdown 库本身只会把它转成字面的 "[ ] 选项" 文字。
+    """
+    md_text = DETAILS_TAG_RE.sub('<details markdown="1"', md_text)
+
     blocks = []
 
     def _stash(match):
@@ -20,7 +37,7 @@ def render_md_to_html(md_text):
         return f"@@MERMAID_BLOCK_{len(blocks) - 1}@@"
 
     stashed = MERMAID_BLOCK_RE.sub(_stash, md_text)
-    html = md_lib.markdown(stashed, extensions=["fenced_code", "tables"])
+    html = md_lib.markdown(stashed, extensions=["fenced_code", "tables", "md_in_html"])
 
     for i, code in enumerate(blocks):
         placeholder = f"@@MERMAID_BLOCK_{i}@@"
@@ -28,6 +45,8 @@ def render_md_to_html(md_text):
         # markdown 转换器常把独立占一行的文本包进 <p> 标签,这里两种情况都替换掉
         html = html.replace(f"<p>{placeholder}</p>", mermaid_html)
         html = html.replace(placeholder, mermaid_html)
+
+    html = TASK_ITEM_RE.sub(_task_item, html)
 
     return html
 
