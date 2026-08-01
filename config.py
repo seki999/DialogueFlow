@@ -20,6 +20,14 @@ LANGUAGES = {
 }
 DEFAULT_LANGUAGE = "zh"
 
+# 播放模式:play_record(播放并录屏,默认)/ play_only(只播放,不录屏,
+# 适合快速预览/调试素材,不需要配置好 ffmpeg 录屏设备也能用)
+PLAYBACK_MODES = {
+    "play_record": "播放并录屏",
+    "play_only": "仅播放(不录屏)",
+}
+DEFAULT_MODE = "play_record"
+
 # 字幕里说话人标签的多语言文案
 SPEAKER_LABELS = {
     "zh": {"1": "说话人 1", "2": "说话人 2"},

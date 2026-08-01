@@ -14,6 +14,25 @@
   }
   #overview { padding: 24px 40px; }
   #overview h2 { margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 16px; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 16px;
+  }
+  th, td {
+    border: 1px solid #e5e7eb;
+    padding: 10px 16px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #f3f4f6;
+    font-weight: bold;
+  }
+  tbody tr:nth-child(even) td {
+    background: #fafafa;
+  }
   #stage {
     display: none;
     min-height: 100vh;
@@ -45,6 +64,15 @@
     cursor: pointer;
   }
   #lang-select input { margin-right: 6px; }
+  #mode-select {
+    margin: 16px 0;
+    font-size: 16px;
+  }
+  #mode-select label {
+    margin-right: 20px;
+    cursor: pointer;
+  }
+  #mode-select input { margin-right: 6px; }
   #tts-controls {
     margin: 16px 0;
     display: flex;
@@ -109,13 +137,52 @@
   #caption.speaker-2 { border-left: 6px solid #60a5fa; }
   #caption.speaker-2 .caption-name { color: #60a5fa; }
   #caption.speaker-2 .caption-text { color: #dbeafe; }
+  #progress {
+    position: fixed;
+    top: 24px;
+    right: 32px;
+    font-size: 20px;
+    color: #6b7280;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 6px 14px;
+    border-radius: 6px;
+    display: none;
+  }
+  #run-controls {
+    position: fixed;
+    top: 24px;
+    left: 32px;
+    display: none;
+    gap: 12px;
+  }
+  #run-controls button {
+    font-size: 16px;
+    padding: 8px 18px;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+  }
+  #pause-btn { background: #d97706; }
+  #pause-btn:hover { background: #b45309; }
+  #stop-btn { background: #dc2626; }
+  #stop-btn:hover { background: #b91c1c; }
 </style>
 </head>
 <body>
 
 <div id="overview">
   <h1>素材一览(共 {{ slides_preview|length }} 组)</h1>
-  <p>确认下面内容无误后,请把浏览器窗口<strong>最大化 / 按 F11 全屏</strong>,再点击"开始录制"。</p>
+  <p>确认下面内容无误后,请把浏览器窗口<strong>最大化 / 按 F11 全屏</strong>,选好下面的模式/语言/章节后点击"开始"。</p>
+
+  <div id="mode-select">
+    <strong>播放模式:</strong>
+    {% for code, name in playback_modes.items() %}
+      <label>
+        <input type="radio" name="mode" value="{{ code }}" {% if code == default_mode %}checked{% endif %}>{{ name }}
+      </label>
+    {% endfor %}
+  </div>
 
   <div id="lang-select">
     <strong>录制语言:</strong>
@@ -158,7 +225,7 @@
     </div>
   </div>
 
-  <button id="start-btn">开始录制</button>
+  <button id="start-btn">开始</button>
   <div id="status"></div>
 
   {% for slide in slides_preview %}
@@ -170,6 +237,11 @@
 <div id="stage">
   <div id="stage-content"></div>
   <div id="caption"></div>
+  <div id="progress"></div>
+  <div id="run-controls">
+    <button id="pause-btn">暂停</button>
+    <button id="stop-btn">停止</button>
+  </div>
 </div>
 
 <script>
@@ -193,6 +265,8 @@
   bindSlider("pitch-slider", "pitch-output", "Hz");
 
   document.getElementById("start-btn").addEventListener("click", () => {
+    const modeInput = document.querySelector('input[name="mode"]:checked');
+    const mode = modeInput ? modeInput.value : "{{ default_mode }}";
     const langInput = document.querySelector('input[name="lang"]:checked');
     const lang = langInput ? langInput.value : "{{ default_language }}";
     const rate = parseInt(document.getElementById("rate-slider").value, 10);
@@ -200,13 +274,16 @@
     const pitch = parseInt(document.getElementById("pitch-slider").value, 10);
     const startIndex = parseInt(document.getElementById("start-index-select").value, 10);
     const endIndex = parseInt(document.getElementById("end-index-select").value, 10);
-    document.getElementById("status").innerText = "已开始录制,请勿关闭本窗口或切换到其他窗口...";
+    const statusText = mode === "play_only"
+      ? "已开始播放,请勿关闭本窗口或切换到其他窗口..."
+      : "已开始录制,请勿关闭本窗口或切换到其他窗口...";
+    document.getElementById("status").innerText = statusText;
     document.getElementById("start-btn").disabled = true;
     fetch("/api/start", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        lang: lang, rate: rate, volume: volume, pitch: pitch,
+        mode: mode, lang: lang, rate: rate, volume: volume, pitch: pitch,
         start_index: startIndex, end_index: endIndex,
       }),
     });
@@ -220,6 +297,10 @@
     content.innerHTML = data.html;
     renderMermaidIn(content);
     document.getElementById("caption").style.display = "none";
+    const progress = document.getElementById("progress");
+    progress.textContent = `第 ${data.progress_current} / 共 ${data.progress_total} 组(第 ${data.index} 组)`;
+    progress.style.display = "block";
+    document.getElementById("run-controls").style.display = "flex";
   });
 
   socket.on("show_caption", (data) => {
@@ -240,6 +321,31 @@
     const content = document.getElementById("stage-content");
     content.innerHTML = '<div id="done-banner">播放完毕</div>';
     document.getElementById("caption").style.display = "none";
+    document.getElementById("progress").style.display = "none";
+    document.getElementById("run-controls").style.display = "none";
+  });
+
+  socket.on("stopped", () => {
+    const content = document.getElementById("stage-content");
+    content.innerHTML = '<div id="done-banner">已手动停止</div>';
+    document.getElementById("caption").style.display = "none";
+    document.getElementById("progress").style.display = "none";
+    document.getElementById("run-controls").style.display = "none";
+  });
+
+  document.getElementById("pause-btn").addEventListener("click", () => {
+    fetch("/api/pause", { method: "POST" })
+      .then((r) => r.json())
+      .then((data) => {
+        document.getElementById("pause-btn").textContent =
+          data.status === "paused" ? "继续" : "暂停";
+      });
+  });
+
+  document.getElementById("stop-btn").addEventListener("click", () => {
+    if (!confirm("确定要停止吗?已经播放/录制的部分会保留。")) return;
+    fetch("/api/stop", { method: "POST" });
+    document.getElementById("stop-btn").disabled = true;
   });
 </script>
 

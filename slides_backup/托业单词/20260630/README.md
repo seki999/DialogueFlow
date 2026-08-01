@@ -31,7 +31,9 @@
 3. 播放对应的 `.conversation` 文件
 4. 跟读对话中的单词、短语和句子
 5. 完成快速复习
-6. 再进入下一个单词
+6. 完成文件末尾的 5 道选择题
+7. 展开答案区，检查对错并阅读解析
+8. 根据考试结果决定复习或进入下一个单词
 
 ## 文件命名规则
 
@@ -41,8 +43,7 @@
 - `01.conversation`
 - `02.md`
 - `02.conversation`
-
-以此类推，直到 `10.md` / `10.conversation`。
+- ……以此类推，直到 `10.md` / `10.conversation`
 
 ## 本次课程信息
 
@@ -51,3 +52,16 @@
 - 教学语言：中文
 - 目标语言：英语
 - 适用对象：汉语母语英语学习者
+
+## 特别提示（本次课程中的重点易混淆词）
+
+- `complement`（互补、补充）vs `compliment`（赞美）—— 01.md
+- `inferiority`（自卑、劣势）vs `inferior`（次等的，形容词）—— 02.md
+- `persecution`（迫害）vs `prosecution`（起诉、检方）—— 03.md
+- `concession`（让步、优惠）vs `confession`（坦白、供认）—— 04.md
+- `confine`（限制、禁闭）vs `confidence`（信心）—— 05.md
+- `conservative`（保守的）vs `conservation`（保护、保育）—— 06.md
+- `consignment`（托运货物、寄售）vs `assignment`（作业、任务）—— 07.md
+- `contagious`（接触传染的）vs `infectious`（传染性的，范围更广）—— 08.md
+- `contend`（竞争、主张）vs `content`（内容、满足的）—— 09.md
+- `contingent`（视……而定的；一群人）vs `contingency`（意外情况）—— 10.md

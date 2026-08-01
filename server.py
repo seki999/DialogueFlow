@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
 
 import config
+from control import PlaybackControl
 
 MERMAID_BLOCK_RE = re.compile(r"```mermaid\s*\n(.*?)```", re.DOTALL)
 
@@ -65,6 +66,8 @@ def create_app(slides, on_start):
             slide_indices=slide_indices,
             min_index=min_index,
             max_index=max_index,
+            playback_modes=config.PLAYBACK_MODES,
+            default_mode=config.DEFAULT_MODE,
         )
 
     @app.route("/api/start", methods=["POST"])
@@ -91,25 +94,53 @@ def create_app(slides, on_start):
         if start_index > end_index:
             start_index, end_index = end_index, start_index
 
+        mode = data.get("mode")
+        if mode not in config.PLAYBACK_MODES:
+            mode = config.DEFAULT_MODE
+
+        control = PlaybackControl()
+        app.current_control = control  # 供 /api/pause /api/stop 操作当前这次运行
+
         threading.Thread(
             target=on_start,
-            args=(lang, rate, volume, pitch, start_index, end_index),
+            args=(lang, rate, volume, pitch, start_index, end_index, mode, control),
             daemon=True,
         ).start()
         return jsonify({
             "status": "started", "lang": lang, "rate": rate, "volume": volume,
             "pitch": pitch, "start_index": start_index, "end_index": end_index,
+            "mode": mode,
         })
 
-    def show_slide(slide_pos):
+    @app.route("/api/pause", methods=["POST"])
+    def api_pause():
+        control = getattr(app, "current_control", None)
+        if control is None or control.is_stop_requested():
+            return jsonify({"status": "no_active_session"}), 400
+        control.toggle_pause()
+        return jsonify({"status": "paused" if control.is_paused() else "resumed"})
+
+    @app.route("/api/stop", methods=["POST"])
+    def api_stop():
+        control = getattr(app, "current_control", None)
+        if control is None:
+            return jsonify({"status": "no_active_session"}), 400
+        control.request_stop()
+        return jsonify({"status": "stop_requested"})
+
+    def show_slide(slide_pos, progress_current, progress_total):
         socketio.emit("show_slide", {
             "html": rendered_slides[slide_pos],
             "index": slides[slide_pos]["index"],
-            "total": len(slides),
+            "progress_current": progress_current,
+            "progress_total": progress_total,
         })
 
     def show_done():
         socketio.emit("all_done", {})
+
+    def show_stopped():
+        socketio.emit("stopped", {})
 
     def show_caption(lang, speaker, text):
         # text 为空字符串时表示清空字幕(切换 slide / 全部播完时用)
@@ -119,6 +150,7 @@ def create_app(slides, on_start):
     # 把回调方法挂在 app 上,方便 main.py 里直接调用
     app.show_slide = show_slide
     app.show_done = show_done
+    app.show_stopped = show_stopped
     app.show_caption = show_caption
 
     return app, socketio
