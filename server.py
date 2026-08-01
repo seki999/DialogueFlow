@@ -6,7 +6,7 @@ from flask_socketio import SocketIO
 
 import config
 from control import PlaybackControl
-from loader import list_courses, resolve_course_dir, load_slide_pairs
+from loader import list_courses, resolve_course_dir, load_slide_pairs, build_course_tree, default_course
 
 MERMAID_BLOCK_RE = re.compile(r"```mermaid\s*\n(.*?)```", re.DOTALL)
 DETAILS_TAG_RE = re.compile(r"<details(?![^>]*\bmarkdown=)")
@@ -118,9 +118,9 @@ def create_app(slides_root, on_start):
                 500,
             )
 
-        course = request.args.get("course") or courses[0]
+        course = request.args.get("course") or default_course(courses, config.DEFAULT_COURSE_HINT)
         if course not in courses:
-            course = courses[0]
+            course = default_course(courses, config.DEFAULT_COURSE_HINT)
 
         # 课程标识已经具体到叶子目录了,预览页不需要再按语言重新解析
         slides, _course_dir, error = _load_course(slides_root, course)
@@ -132,8 +132,9 @@ def create_app(slides_root, on_start):
 
         return render_template(
             "index.html",
-            courses=courses,
+            course_tree=build_course_tree(slides_root),
             selected_course=course,
+            selected_course_path=[] if course == "." else course.split("/"),
             slides_preview=[
                 {"index": s["index"], "html": rendered_slides[i]}
                 for i, s in enumerate(slides)
@@ -146,6 +147,8 @@ def create_app(slides_root, on_start):
             volume_range=config.TTS_VOLUME_RANGE,
             pitch_default=config.TTS_PITCH_DEFAULT,
             pitch_range=config.TTS_PITCH_RANGE,
+            caption_font_size_default=config.CAPTION_FONT_SIZE_DEFAULT,
+            caption_font_size_range=config.CAPTION_FONT_SIZE_RANGE,
             slide_indices=slide_indices,
             min_index=min(slide_indices),
             max_index=max(slide_indices),
@@ -162,7 +165,7 @@ def create_app(slides_root, on_start):
             return jsonify({"status": "error", "message": "没有可用的课程"}), 400
         course = data.get("course")
         if course not in courses:
-            course = courses[0]
+            course = default_course(courses, config.DEFAULT_COURSE_HINT)
 
         lang = data.get("lang")
         if lang not in config.LANGUAGES:

@@ -70,6 +70,45 @@ def resolve_course_dir(slides_root, course):
     return path if os.path.isdir(path) and _has_md(path) else None
 
 
+LEAF = "__LEAF__"  # 标记这一层目录本身直接放着 NN.md,可以直接选中,不用再往下一级
+
+
+def build_course_tree(slides_root):
+    """把 slides_root 下的目录结构变成嵌套字典,给前端做多级级联下拉框用。
+    每一层的 key 是文件夹名,value 要么是 LEAF(这一层直接放着 NN.md,
+    可以在这一级直接选中),要么是下一层的字典(还有子文件夹)。
+    如果 slides_root 自己直接放着 .md,整棵树就是 LEAF 本身(不需要下拉框)。
+    """
+    def _walk(path):
+        if _has_md(path):
+            return LEAF
+        node = {}
+        if not os.path.isdir(path):
+            return node
+        for name in sorted(os.listdir(path)):
+            sub = os.path.join(path, name)
+            if os.path.isdir(sub):
+                child = _walk(sub)
+                if child:  # 空字典(该子树完全没有 .md)就不收进去
+                    node[name] = child
+        return node
+
+    return _walk(slides_root)
+
+
+def default_course(courses, hint):
+    """从 list_courses() 的结果里挑默认选中项:优先选路径第一层等于 hint 的,
+    找不到就退回第一个;courses 为空时返回 None。"""
+    if not courses:
+        return None
+    for c in courses:
+        if c == ROOT_COURSE:
+            continue
+        if c.split("/")[0] == hint:
+            return c
+    return courses[0]
+
+
 def load_slide_pairs(slides_dir, languages):
     """
     languages: 支持的语言代码列表,例如 ["zh", "ja", "en"]

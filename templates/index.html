@@ -172,26 +172,26 @@
     transform: translateX(-50%);
     max-width: 80%;
     padding: 12px 24px;
-    background: rgba(0, 0, 0, 0.72);
-    font-size: 28px;
     line-height: 1.5;
     text-align: center;
-    border-radius: 8px;
     display: none;
+    cursor: move;
+    user-select: none;
+    color: #1f2937;
+    /* 没有背景色了,用白色描边让文字在各种底色的画面上都还能看清 */
+    text-shadow:
+      -1px -1px 0 #fff, 1px -1px 0 #fff,
+      -1px 1px 0 #fff, 1px 1px 0 #fff,
+      0 0 6px rgba(255, 255, 255, 0.9);
   }
   #caption .caption-name {
     display: block;
-    font-size: 16px;
+    font-size: 0.6em;
     font-weight: bold;
     margin-bottom: 4px;
   }
-  #caption.speaker-1 { border-left: 6px solid #f472b6; }
-  #caption.speaker-1 .caption-name { color: #f472b6; }
-  #caption.speaker-1 .caption-text { color: #ffe4ef; }
-
-  #caption.speaker-2 { border-left: 6px solid #60a5fa; }
-  #caption.speaker-2 .caption-name { color: #60a5fa; }
-  #caption.speaker-2 .caption-text { color: #dbeafe; }
+  #caption.speaker-1 .caption-name { color: #db2777; }
+  #caption.speaker-2 .caption-name { color: #1d4ed8; }
   #progress {
     position: fixed;
     top: 24px;
@@ -229,13 +229,8 @@
 <div id="overview">
   <div id="course-select">
     <strong>课程:</strong>
-    <select id="course-picker">
-      {% for c in courses %}
-        <option value="{{ c }}" {% if c == selected_course %}selected{% endif %}>
-          {{ "(根目录默认素材)" if c == "." else c.replace("/", " › ") }}
-        </option>
-      {% endfor %}
-    </select>
+    <span id="course-levels"></span>
+    <input type="hidden" id="course-value" value="{{ selected_course }}">
   </div>
 
   <h1>素材一览(共 {{ slides_preview|length }} 组)</h1>
@@ -289,6 +284,10 @@
       <label for="pitch-slider">音高 <output id="pitch-output">{{ "%+d"|format(pitch_default) }}Hz</output></label>
       <input type="range" id="pitch-slider" min="{{ pitch_range[0] }}" max="{{ pitch_range[1] }}" step="5" value="{{ pitch_default }}">
     </div>
+    <div class="slider-item">
+      <label for="caption-fontsize-slider">字幕字号 <output id="caption-fontsize-output">{{ caption_font_size_default }}px</output></label>
+      <input type="range" id="caption-fontsize-slider" min="{{ caption_font_size_range[0] }}" max="{{ caption_font_size_range[1] }}" step="2" value="{{ caption_font_size_default }}">
+    </div>
   </div>
 
   <button id="start-btn">开始</button>
@@ -334,14 +333,106 @@
   bindSlider("volume-slider", "volume-output", "%");
   bindSlider("pitch-slider", "pitch-output", "Hz");
 
-  document.getElementById("course-picker").addEventListener("change", (e) => {
+  // 字幕字号是纯前端效果,不需要发给后端,滑动时直接改 #caption 的 font-size
+  const captionEl = document.getElementById("caption");
+  const captionFontSlider = document.getElementById("caption-fontsize-slider");
+  const captionFontOutput = document.getElementById("caption-fontsize-output");
+  function applyCaptionFontSize() {
+    captionEl.style.fontSize = captionFontSlider.value + "px";
+    captionFontOutput.textContent = captionFontSlider.value + "px";
+  }
+  captionFontSlider.addEventListener("input", applyCaptionFontSize);
+  applyCaptionFontSize();
+
+  // 字幕可以在播放过程中自由拖拽到任意位置。默认用 left:50%+transform 居中,
+  // 第一次拖动时切换成明确的 left/top 像素定位,之后位置会一直保留,
+  // 不会因为字幕内容更新(show_caption 事件只改文字/class,不碰位置)而重置。
+  (function enableCaptionDrag() {
+    let dragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    captionEl.addEventListener("mousedown", (e) => {
+      dragging = true;
+      const rect = captionEl.getBoundingClientRect();
+      captionEl.style.left = rect.left + "px";
+      captionEl.style.top = rect.top + "px";
+      captionEl.style.bottom = "auto";
+      captionEl.style.transform = "none";
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      e.preventDefault();
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!dragging) return;
+      captionEl.style.left = (e.clientX - offsetX) + "px";
+      captionEl.style.top = (e.clientY - offsetY) + "px";
+    });
+
+    document.addEventListener("mouseup", () => {
+      dragging = false;
+    });
+  })();
+
+  // ---- 课程级联下拉框:slides/ 下可能嵌套任意层文件夹,每一层动态生成一个
+  // <select>,选中的值决定下一层显示哪些选项,直到到达真正存放 NN.md 的目录。
+  const courseTree = {{ course_tree | tojson }};
+  const COURSE_LEAF = "__LEAF__";
+  const initialCoursePath = {{ selected_course_path | tojson }};
+
+  function renderCourseLevels(selectedPath, navigateOnChange) {
+    const container = document.getElementById("course-levels");
+    container.innerHTML = "";
+    let node = courseTree;
+    const resolvedPath = [];
+    let level = 0;
+
+    while (node !== COURSE_LEAF && typeof node === "object" && node !== null) {
+      const keys = Object.keys(node);
+      if (keys.length === 0) break;
+      const chosen = selectedPath[level] && keys.includes(selectedPath[level])
+        ? selectedPath[level] : keys[0];
+
+      const select = document.createElement("select");
+      select.dataset.level = level;
+      keys.forEach((k) => {
+        const opt = document.createElement("option");
+        opt.value = k;
+        opt.textContent = k;
+        if (k === chosen) opt.selected = true;
+        select.appendChild(opt);
+      });
+      if (navigateOnChange) {
+        select.addEventListener("change", onCourseLevelChange);
+      }
+      container.appendChild(select);
+
+      resolvedPath.push(chosen);
+      node = node[chosen];
+      level++;
+    }
+
+    const courseValue = resolvedPath.length > 0 ? resolvedPath.join("/") : ".";
+    document.getElementById("course-value").value = courseValue;
+    return resolvedPath;
+  }
+
+  function onCourseLevelChange(e) {
+    const level = parseInt(e.target.dataset.level, 10);
+    const selects = document.querySelectorAll("#course-levels select");
+    const pathSoFar = [];
+    for (let i = 0; i <= level; i++) pathSoFar.push(selects[i].value);
+    const fullPath = renderCourseLevels(pathSoFar, true);
     const url = new URL(window.location.href);
-    url.searchParams.set("course", e.target.value);
+    url.searchParams.set("course", fullPath.length > 0 ? fullPath.join("/") : ".");
     window.location.href = url.toString();
-  });
+  }
+
+  renderCourseLevels(initialCoursePath, true);
 
   document.getElementById("start-btn").addEventListener("click", () => {
-    const course = document.getElementById("course-picker").value;
+    const course = document.getElementById("course-value").value;
     const modeInput = document.querySelector('input[name="mode"]:checked');
     const mode = modeInput ? modeInput.value : "{{ default_mode }}";
     const langInput = document.querySelector('input[name="lang"]:checked');

@@ -5,6 +5,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # 素材文件夹路径(存放 01.md / 01.conversation, 02.md / 02.conversation ...)
 SLIDES_DIR = os.path.join(BASE_DIR, "slides")
 
+# 页面首次打开时默认选中的课程:优先选路径第一层文件夹名等于这个值的课程,
+# 找不到时退回列表里的第一个课程
+DEFAULT_COURSE_HINT = "托业单词"
+
 # 输出视频路径(实际文件名会在运行时加上时间戳,支持反复录制不覆盖)
 OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 OUTPUT_FILENAME_PREFIX = "lesson_video"
@@ -26,7 +30,7 @@ PLAYBACK_MODES = {
     "play_record": "播放并录屏",
     "play_only": "仅播放(不录屏)",
 }
-DEFAULT_MODE = "play_record"
+DEFAULT_MODE = "play_only"
 
 # 字幕里说话人标签的多语言文案
 SPEAKER_LABELS = {
@@ -59,6 +63,10 @@ TTS_VOLUME_DEFAULT = 0      # 音量百分比,滑块范围见 TTS_VOLUME_RANGE
 TTS_VOLUME_RANGE = (-50, 50)
 TTS_PITCH_DEFAULT = 0       # 音高,单位 Hz,滑块范围见 TTS_PITCH_RANGE
 TTS_PITCH_RANGE = (-50, 50)
+
+# 字幕字号(纯前端效果,不影响语音,单位 px)
+CAPTION_FONT_SIZE_DEFAULT = 28
+CAPTION_FONT_SIZE_RANGE = (16, 56)
 
 # 本地 Web 服务
 WEB_HOST = "127.0.0.1"
