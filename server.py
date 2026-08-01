@@ -42,6 +42,9 @@ def create_app(slides, on_start):
     socketio = SocketIO(app, cors_allowed_origins="*")
 
     rendered_slides = [render_md_to_html(s["md_text"]) for s in slides]
+    slide_indices = [s["index"] for s in slides]  # 排序后的实际章节编号列表(可能不连续)
+    min_index = min(slide_indices)
+    max_index = max(slide_indices)
 
     @app.route("/")
     def index():
@@ -53,6 +56,15 @@ def create_app(slides, on_start):
             ],
             languages=config.LANGUAGES,
             default_language=config.DEFAULT_LANGUAGE,
+            rate_default=config.TTS_RATE_DEFAULT,
+            rate_range=config.TTS_RATE_RANGE,
+            volume_default=config.TTS_VOLUME_DEFAULT,
+            volume_range=config.TTS_VOLUME_RANGE,
+            pitch_default=config.TTS_PITCH_DEFAULT,
+            pitch_range=config.TTS_PITCH_RANGE,
+            slide_indices=slide_indices,
+            min_index=min_index,
+            max_index=max_index,
         )
 
     @app.route("/api/start", methods=["POST"])
@@ -61,8 +73,33 @@ def create_app(slides, on_start):
         lang = data.get("lang")
         if lang not in config.LANGUAGES:
             lang = config.DEFAULT_LANGUAGE
-        threading.Thread(target=on_start, args=(lang,), daemon=True).start()
-        return jsonify({"status": "started", "lang": lang})
+
+        def _clamp_int(value, default, value_range):
+            try:
+                value = int(value)
+            except (TypeError, ValueError):
+                return default
+            lo, hi = value_range
+            return max(lo, min(hi, value))
+
+        rate = _clamp_int(data.get("rate"), config.TTS_RATE_DEFAULT, config.TTS_RATE_RANGE)
+        volume = _clamp_int(data.get("volume"), config.TTS_VOLUME_DEFAULT, config.TTS_VOLUME_RANGE)
+        pitch = _clamp_int(data.get("pitch"), config.TTS_PITCH_DEFAULT, config.TTS_PITCH_RANGE)
+
+        start_index = _clamp_int(data.get("start_index"), min_index, (min_index, max_index))
+        end_index = _clamp_int(data.get("end_index"), max_index, (min_index, max_index))
+        if start_index > end_index:
+            start_index, end_index = end_index, start_index
+
+        threading.Thread(
+            target=on_start,
+            args=(lang, rate, volume, pitch, start_index, end_index),
+            daemon=True,
+        ).start()
+        return jsonify({
+            "status": "started", "lang": lang, "rate": rate, "volume": volume,
+            "pitch": pitch, "start_index": start_index, "end_index": end_index,
+        })
 
     def show_slide(slide_pos):
         socketio.emit("show_slide", {

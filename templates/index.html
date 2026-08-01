@@ -45,6 +45,37 @@
     cursor: pointer;
   }
   #lang-select input { margin-right: 6px; }
+  #tts-controls {
+    margin: 16px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  #tts-controls .slider-item {
+    display: flex;
+    flex-direction: column;
+    min-width: 220px;
+  }
+  #tts-controls label {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  #tts-controls output {
+    font-weight: bold;
+    color: #2563eb;
+  }
+  #tts-controls input[type="range"] {
+    width: 220px;
+  }
+  #chapter-range {
+    margin: 16px 0;
+    font-size: 16px;
+  }
+  #chapter-range select {
+    font-size: 16px;
+    padding: 4px 8px;
+    margin: 0 8px;
+  }
   .mermaid { text-align: center; }
   #done-banner {
     font-size: 32px;
@@ -95,6 +126,38 @@
     {% endfor %}
   </div>
 
+  <div id="chapter-range">
+    <strong>播放章节(共 {{ slide_indices|length }} 组):</strong>
+    从
+    <select id="start-index-select">
+      {% for idx in slide_indices %}
+        <option value="{{ idx }}" {% if idx == min_index %}selected{% endif %}>第 {{ idx }} 组</option>
+      {% endfor %}
+    </select>
+    到
+    <select id="end-index-select">
+      {% for idx in slide_indices %}
+        <option value="{{ idx }}" {% if idx == max_index %}selected{% endif %}>第 {{ idx }} 组</option>
+      {% endfor %}
+    </select>
+    (只想录单独一组,把"从"和"到"选成同一组即可,比如都选第 10 组)
+  </div>
+
+  <div id="tts-controls">
+    <div class="slider-item">
+      <label for="rate-slider">语速 <output id="rate-output">{{ "%+d"|format(rate_default) }}%</output></label>
+      <input type="range" id="rate-slider" min="{{ rate_range[0] }}" max="{{ rate_range[1] }}" step="5" value="{{ rate_default }}">
+    </div>
+    <div class="slider-item">
+      <label for="volume-slider">音量 <output id="volume-output">{{ "%+d"|format(volume_default) }}%</output></label>
+      <input type="range" id="volume-slider" min="{{ volume_range[0] }}" max="{{ volume_range[1] }}" step="5" value="{{ volume_default }}">
+    </div>
+    <div class="slider-item">
+      <label for="pitch-slider">音高 <output id="pitch-output">{{ "%+d"|format(pitch_default) }}Hz</output></label>
+      <input type="range" id="pitch-slider" min="{{ pitch_range[0] }}" max="{{ pitch_range[1] }}" step="5" value="{{ pitch_default }}">
+    </div>
+  </div>
+
   <button id="start-btn">开始录制</button>
   <div id="status"></div>
 
@@ -117,15 +180,35 @@
     mermaid.run({ nodes: el.querySelectorAll(".mermaid") });
   }
 
+  function bindSlider(sliderId, outputId, suffix) {
+    const slider = document.getElementById(sliderId);
+    const output = document.getElementById(outputId);
+    slider.addEventListener("input", () => {
+      const v = parseInt(slider.value, 10);
+      output.textContent = (v >= 0 ? "+" : "") + v + suffix;
+    });
+  }
+  bindSlider("rate-slider", "rate-output", "%");
+  bindSlider("volume-slider", "volume-output", "%");
+  bindSlider("pitch-slider", "pitch-output", "Hz");
+
   document.getElementById("start-btn").addEventListener("click", () => {
     const langInput = document.querySelector('input[name="lang"]:checked');
     const lang = langInput ? langInput.value : "{{ default_language }}";
+    const rate = parseInt(document.getElementById("rate-slider").value, 10);
+    const volume = parseInt(document.getElementById("volume-slider").value, 10);
+    const pitch = parseInt(document.getElementById("pitch-slider").value, 10);
+    const startIndex = parseInt(document.getElementById("start-index-select").value, 10);
+    const endIndex = parseInt(document.getElementById("end-index-select").value, 10);
     document.getElementById("status").innerText = "已开始录制,请勿关闭本窗口或切换到其他窗口...";
     document.getElementById("start-btn").disabled = true;
     fetch("/api/start", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ lang: lang }),
+      body: JSON.stringify({
+        lang: lang, rate: rate, volume: volume, pitch: pitch,
+        start_index: startIndex, end_index: endIndex,
+      }),
     });
   });
 

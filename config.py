@@ -44,6 +44,14 @@ VOICE_MAP = {
     },
 }
 
+# 语速/音量/音高滑块:三种语言共用一套设置,单位见各自注释,默认都是 0(不调整)
+TTS_RATE_DEFAULT = 0        # 语速百分比,滑块范围见 TTS_RATE_RANGE
+TTS_RATE_RANGE = (-50, 100)
+TTS_VOLUME_DEFAULT = 0      # 音量百分比,滑块范围见 TTS_VOLUME_RANGE
+TTS_VOLUME_RANGE = (-50, 50)
+TTS_PITCH_DEFAULT = 0       # 音高,单位 Hz,滑块范围见 TTS_PITCH_RANGE
+TTS_PITCH_RANGE = (-50, 50)
+
 # 本地 Web 服务
 WEB_HOST = "127.0.0.1"
 WEB_PORT = 5000
