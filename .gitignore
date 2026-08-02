@@ -1,13 +1,7 @@
-# Python 虚拟环境
-venv/
-__pycache__/
-*.pyc
-
-# 生成的语音缓存(可以随时重新生成,不需要进版本库)
-tts_cache/
-
-# 录制生成的视频和日志(体积大,不适合进版本库)
-output/
+# Node.js 依赖与 Vite 构建产物
+node_modules/
+dist/
+*.local
 
 # 编辑器/系统杂项文件
 .vscode/
