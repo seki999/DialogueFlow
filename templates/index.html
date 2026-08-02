@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>教学视频自动播放</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<style>
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    margin: 0;
+    background: #ffffff;
+    color: #1f2937;
+  }
+  #overview { padding: 24px 40px; }
+  #overview h2 { margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 16px; }
+  #course-select {
+    margin: 16px 0;
+    font-size: 16px;
+  }
+  #course-select select {
+    font-size: 16px;
+    padding: 6px 12px;
+    margin-left: 8px;
+  }
+  #clear-cache-row {
+    margin: 8px 0 16px;
+  }
+  #clear-cache-btn {
+    font-size: 14px;
+    padding: 6px 14px;
+    cursor: pointer;
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+  }
+  #clear-cache-btn:hover { background: #e5e7eb; color: #374151; }
+  #clear-cache-status {
+    margin-left: 12px;
+    font-size: 14px;
+    color: #6b7280;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 16px;
+  }
+  th, td {
+    border: 1px solid #e5e7eb;
+    padding: 10px 16px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #f3f4f6;
+    font-weight: bold;
+  }
+  tbody tr:nth-child(even) td {
+    background: #fafafa;
+  }
+  li.task-item {
+    list-style: none;
+  }
+  li.task-item label {
+    cursor: pointer;
+  }
+  li.task-item input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.2);
+    vertical-align: middle;
+  }
+  details {
+    margin: 12px 0;
+    padding: 4px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #f9fafb;
+  }
+  details summary {
+    cursor: pointer;
+    font-weight: bold;
+    color: #2563eb;
+    padding: 8px 0;
+  }
+  details[open] summary {
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 8px;
+  }
+  blockquote {
+    margin: 12px 0;
+    padding: 8px 16px;
+    border-left: 4px solid #93c5fd;
+    background: #eff6ff;
+    color: #374151;
+  }
+  blockquote p { margin: 0; }
+  code {
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.95em;
+  }
+  pre:not(.mermaid) {
+    font-size: 1.3em;
+    line-height: 1.6;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 1em;
+  }
+  pre code.language-text {
+    font-weight: bold;
+  }
+  #stage {
+    display: none;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 48px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  #stage.active { display: flex; }
+  #stage-content { width: 100%; }
+  #start-btn {
+    font-size: 20px;
+    padding: 12px 28px;
+    cursor: pointer;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+  }
+  #start-btn:hover { background: #1d4ed8; }
+  #status { margin-top: 16px; color: #555; }
+  #lang-select {
+    margin: 16px 0;
+    font-size: 16px;
+  }
+  #lang-select label {
+    margin-right: 20px;
+    cursor: pointer;
+  }
+  #lang-select input { margin-right: 6px; }
+  #mode-select {
+    margin: 16px 0;
+    font-size: 16px;
+  }
+  #mode-select label {
+    margin-right: 20px;
+    cursor: pointer;
+  }
+  #mode-select input { margin-right: 6px; }
+  #tts-controls {
+    margin: 16px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  #tts-controls .slider-item {
+    display: flex;
+    flex-direction: column;
+    min-width: 220px;
+  }
+  #tts-controls label {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  #tts-controls output {
+    font-weight: bold;
+    color: #2563eb;
+  }
+  #tts-controls input[type="range"] {
+    width: 220px;
+  }
+  #chapter-range {
+    margin: 16px 0;
+    font-size: 16px;
+  }
+  #chapter-range select {
+    font-size: 16px;
+    padding: 4px 8px;
+    margin: 0 8px;
+  }
+  .mermaid { text-align: center; }
+  #done-banner {
+    font-size: 32px;
+    text-align: center;
+    color: #16a34a;
+  }
+  #restart-link {
+    text-align: center;
+    margin-top: 20px;
+  }
+  #restart-link a {
+    font-size: 18px;
+    color: #2563eb;
+    text-decoration: none;
+    padding: 8px 20px;
+    border: 1px solid #2563eb;
+    border-radius: 6px;
+  }
+  #restart-link a:hover {
+    background: #2563eb;
+    color: #fff;
+  }
+  #caption {
+    position: fixed;
+    left: 50%;
+    bottom: 48px;
+    transform: translateX(-50%);
+    max-width: 80%;
+    padding: 12px 24px;
+    line-height: 1.5;
+    text-align: center;
+    display: none;
+    cursor: move;
+    user-select: none;
+    color: #1f2937;
+    /* 没有背景色了,用白色描边让文字在各种底色的画面上都还能看清 */
+    text-shadow:
+      -1px -1px 0 #fff, 1px -1px 0 #fff,
+      -1px 1px 0 #fff, 1px 1px 0 #fff,
+      0 0 6px rgba(255, 255, 255, 0.9);
+  }
+  #caption .caption-name {
+    display: block;
+    font-size: 0.6em;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  #caption.speaker-1 .caption-name { color: #db2777; }
+  #caption.speaker-2 .caption-name { color: #1d4ed8; }
+  #progress {
+    position: fixed;
+    top: 24px;
+    right: 32px;
+    font-size: 20px;
+    color: #6b7280;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 6px 14px;
+    border-radius: 6px;
+    display: none;
+  }
+  #run-controls {
+    position: fixed;
+    top: 24px;
+    left: 32px;
+    display: none;
+    gap: 12px;
+  }
+  #run-controls button {
+    font-size: 16px;
+    padding: 8px 18px;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+  }
+  #pause-btn { background: #d97706; }
+  #pause-btn:hover { background: #b45309; }
+  #stop-btn { background: #dc2626; }
+  #stop-btn:hover { background: #b91c1c; }
+</style>
+</head>
+<body>
+
+<div id="overview">
+  <div id="course-select">
+    <strong>课程:</strong>
+    <span id="course-levels"></span>
+    <input type="hidden" id="course-value" value="{{ selected_course }}">
+  </div>
+
+  <div id="clear-cache-row">
+    <button id="clear-cache-btn">清空缓存和视频</button>
+    <span id="clear-cache-status"></span>
+  </div>
+
+  <h1>素材一览(共 {{ slides_preview|length }} 组)</h1>
+  <p>确认下面内容无误后,请把浏览器窗口<strong>最大化 / 按 F11 全屏</strong>,选好下面的模式/语言/章节后点击"开始"。</p>
+
+  <div id="mode-select">
+    <strong>播放模式:</strong>
+    {% for code, name in playback_modes.items() %}
+      <label>
+        <input type="radio" name="mode" value="{{ code }}" {% if code == default_mode %}checked{% endif %}>{{ name }}
+      </label>
+    {% endfor %}
+  </div>
+
+  <div id="lang-select">
+    <strong>录制语言:</strong>
+    {% for code, name in languages.items() %}
+      <label>
+        <input type="radio" name="lang" value="{{ code }}" {% if code == default_language %}checked{% endif %}>{{ name }}
+      </label>
+    {% endfor %}
+  </div>
+
+  <div id="chapter-range">
+    <strong>播放章节(共 {{ slide_indices|length }} 组):</strong>
+    从
+    <select id="start-index-select">
+      {% for idx in slide_indices %}
+        <option value="{{ idx }}" {% if idx == min_index %}selected{% endif %}>第 {{ idx }} 组</option>
+      {% endfor %}
+    </select>
+    到
+    <select id="end-index-select">
+      {% for idx in slide_indices %}
+        <option value="{{ idx }}" {% if idx == max_index %}selected{% endif %}>第 {{ idx }} 组</option>
+      {% endfor %}
+    </select>
+    (只想录单独一组,把"从"和"到"选成同一组即可,比如都选第 10 组)
+  </div>
+
+  <div id="tts-controls">
+    <div class="slider-item">
+      <label for="rate-slider">语速 <output id="rate-output">{{ "%+d"|format(rate_default) }}%</output></label>
+      <input type="range" id="rate-slider" min="{{ rate_range[0] }}" max="{{ rate_range[1] }}" step="5" value="{{ rate_default }}">
+    </div>
+    <div class="slider-item">
+      <label for="volume-slider">音量 <output id="volume-output">{{ "%+d"|format(volume_default) }}%</output></label>
+      <input type="range" id="volume-slider" min="{{ volume_range[0] }}" max="{{ volume_range[1] }}" step="5" value="{{ volume_default }}">
+    </div>
+    <div class="slider-item">
+      <label for="pitch-slider">音高 <output id="pitch-output">{{ "%+d"|format(pitch_default) }}Hz</output></label>
+      <input type="range" id="pitch-slider" min="{{ pitch_range[0] }}" max="{{ pitch_range[1] }}" step="5" value="{{ pitch_default }}">
+    </div>
+    <div class="slider-item">
+      <label for="caption-fontsize-slider">字幕字号 <output id="caption-fontsize-output">{{ caption_font_size_default }}px</output></label>
+      <input type="range" id="caption-fontsize-slider" min="{{ caption_font_size_range[0] }}" max="{{ caption_font_size_range[1] }}" step="2" value="{{ caption_font_size_default }}">
+    </div>
+  </div>
+
+  <button id="start-btn">开始</button>
+  <div id="status"></div>
+
+  {% for slide in slides_preview %}
+    <h2>第 {{ slide.index }} 组</h2>
+    <div>{{ slide.html | safe }}</div>
+  {% endfor %}
+</div>
+
+<div id="stage">
+  <div id="stage-content"></div>
+  <div id="caption"></div>
+  <div id="progress"></div>
+  <div id="run-controls">
+    <button id="pause-btn">暂停</button>
+    <button id="stop-btn">停止</button>
+  </div>
+</div>
+
+<script>
+  mermaid.initialize({ startOnLoad: false, theme: "default" });
+  const socket = io();
+
+  function renderMermaidIn(el) {
+    mermaid.run({ nodes: el.querySelectorAll(".mermaid") });
+  }
+
+  // 素材一览页面里每组预览的流程图也要渲染,之前只在录制/播放画面里调用过,
+  // 导致"素材一览"里的 mermaid 代码块一直只显示原始文字,没有画成图。
+  renderMermaidIn(document.getElementById("overview"));
+
+  function bindSlider(sliderId, outputId, suffix) {
+    const slider = document.getElementById(sliderId);
+    const output = document.getElementById(outputId);
+    slider.addEventListener("input", () => {
+      const v = parseInt(slider.value, 10);
+      output.textContent = (v >= 0 ? "+" : "") + v + suffix;
+    });
+  }
+  bindSlider("rate-slider", "rate-output", "%");
+  bindSlider("volume-slider", "volume-output", "%");
+  bindSlider("pitch-slider", "pitch-output", "Hz");
+
+  // 字幕字号是纯前端效果,不需要发给后端,滑动时直接改 #caption 的 font-size
+  const captionEl = document.getElementById("caption");
+  const captionFontSlider = document.getElementById("caption-fontsize-slider");
+  const captionFontOutput = document.getElementById("caption-fontsize-output");
+  function applyCaptionFontSize() {
+    captionEl.style.fontSize = captionFontSlider.value + "px";
+    captionFontOutput.textContent = captionFontSlider.value + "px";
+  }
+  captionFontSlider.addEventListener("input", applyCaptionFontSize);
+  applyCaptionFontSize();
+
+  // 字幕可以在播放过程中自由拖拽到任意位置。默认用 left:50%+transform 居中,
+  // 第一次拖动时切换成明确的 left/top 像素定位,之后位置会一直保留,
+  // 不会因为字幕内容更新(show_caption 事件只改文字/class,不碰位置)而重置。
+  (function enableCaptionDrag() {
+    let dragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    captionEl.addEventListener("mousedown", (e) => {
+      dragging = true;
+      const rect = captionEl.getBoundingClientRect();
+      captionEl.style.left = rect.left + "px";
+      captionEl.style.top = rect.top + "px";
+      captionEl.style.bottom = "auto";
+      captionEl.style.transform = "none";
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      e.preventDefault();
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!dragging) return;
+      captionEl.style.left = (e.clientX - offsetX) + "px";
+      captionEl.style.top = (e.clientY - offsetY) + "px";
+    });
+
+    document.addEventListener("mouseup", () => {
+      dragging = false;
+    });
+  })();
+
+  // ---- 课程级联下拉框:slides/ 下可能嵌套任意层文件夹,每一层动态生成一个
+  // <select>,选中的值决定下一层显示哪些选项,直到到达真正存放 NN.md 的目录。
+  const courseTree = {{ course_tree | tojson }};
+  const COURSE_LEAF = "__LEAF__";
+  const initialCoursePath = {{ selected_course_path | tojson }};
+
+  function renderCourseLevels(selectedPath, navigateOnChange) {
+    const container = document.getElementById("course-levels");
+    container.innerHTML = "";
+    let node = courseTree;
+    const resolvedPath = [];
+    let level = 0;
+
+    while (node !== COURSE_LEAF && typeof node === "object" && node !== null) {
+      const keys = Object.keys(node);
+      if (keys.length === 0) break;
+      const chosen = selectedPath[level] && keys.includes(selectedPath[level])
+        ? selectedPath[level] : keys[0];
+
+      const select = document.createElement("select");
+      select.dataset.level = level;
+      keys.forEach((k) => {
+        const opt = document.createElement("option");
+        opt.value = k;
+        opt.textContent = k;
+        if (k === chosen) opt.selected = true;
+        select.appendChild(opt);
+      });
+      if (navigateOnChange) {
+        select.addEventListener("change", onCourseLevelChange);
+      }
+      container.appendChild(select);
+
+      resolvedPath.push(chosen);
+      node = node[chosen];
+      level++;
+    }
+
+    const courseValue = resolvedPath.length > 0 ? resolvedPath.join("/") : ".";
+    document.getElementById("course-value").value = courseValue;
+    return resolvedPath;
+  }
+
+  function onCourseLevelChange(e) {
+    const level = parseInt(e.target.dataset.level, 10);
+    const selects = document.querySelectorAll("#course-levels select");
+    const pathSoFar = [];
+    for (let i = 0; i <= level; i++) pathSoFar.push(selects[i].value);
+    const fullPath = renderCourseLevels(pathSoFar, true);
+    const url = new URL(window.location.href);
+    url.searchParams.set("course", fullPath.length > 0 ? fullPath.join("/") : ".");
+    window.location.href = url.toString();
+  }
+
+  renderCourseLevels(initialCoursePath, true);
+
+  document.getElementById("start-btn").addEventListener("click", () => {
+    const course = document.getElementById("course-value").value;
+    const modeInput = document.querySelector('input[name="mode"]:checked');
+    const mode = modeInput ? modeInput.value : "{{ default_mode }}";
+    const langInput = document.querySelector('input[name="lang"]:checked');
+    const lang = langInput ? langInput.value : "{{ default_language }}";
+    const rate = parseInt(document.getElementById("rate-slider").value, 10);
+    const volume = parseInt(document.getElementById("volume-slider").value, 10);
+    const pitch = parseInt(document.getElementById("pitch-slider").value, 10);
+    const startIndex = parseInt(document.getElementById("start-index-select").value, 10);
+    const endIndex = parseInt(document.getElementById("end-index-select").value, 10);
+    const statusText = mode === "play_only"
+      ? "已开始播放,请勿关闭本窗口或切换到其他窗口..."
+      : "已开始录制,请勿关闭本窗口或切换到其他窗口...";
+    document.getElementById("status").innerText = statusText;
+    document.getElementById("start-btn").disabled = true;
+    fetch("/api/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        course: course, mode: mode, lang: lang, rate: rate, volume: volume, pitch: pitch,
+        start_index: startIndex, end_index: endIndex,
+      }),
+    });
+  });
+
+  socket.on("show_slide", (data) => {
+    document.getElementById("overview").style.display = "none";
+    const stage = document.getElementById("stage");
+    stage.classList.add("active");
+    const content = document.getElementById("stage-content");
+    content.innerHTML = data.html;
+    renderMermaidIn(content);
+    document.getElementById("caption").style.display = "none";
+    const progress = document.getElementById("progress");
+    progress.textContent = `第 ${data.progress_current} / 共 ${data.progress_total} 组(第 ${data.index} 组)`;
+    progress.style.display = "block";
+    document.getElementById("run-controls").style.display = "flex";
+  });
+
+  socket.on("show_caption", (data) => {
+    const cap = document.getElementById("caption");
+    if (!data.text) {
+      cap.style.display = "none";
+      return;
+    }
+    const isSpeaker2 = data.speaker === "2";
+    cap.className = isSpeaker2 ? "speaker-2" : "speaker-1";
+    cap.innerHTML =
+      `<span class="caption-name">${data.label}</span>` +
+      `<span class="caption-text">${data.text}</span>`;
+    cap.style.display = "block";
+  });
+
+  function homeUrl() {
+    const course = document.getElementById("course-value").value;
+    const url = new URL(window.location.origin + window.location.pathname);
+    if (course) url.searchParams.set("course", course);
+    return url.toString();
+  }
+
+  socket.on("all_done", () => {
+    const content = document.getElementById("stage-content");
+    content.innerHTML =
+      '<div id="done-banner">播放完毕</div>' +
+      '<div id="restart-link"><a href="' + homeUrl() + '">返回首页,重新开始</a></div>';
+    document.getElementById("caption").style.display = "none";
+    document.getElementById("progress").style.display = "none";
+    document.getElementById("run-controls").style.display = "none";
+  });
+
+  socket.on("stopped", () => {
+    const content = document.getElementById("stage-content");
+    content.innerHTML =
+      '<div id="done-banner">已手动停止</div>' +
+      '<div id="restart-link"><a href="' + homeUrl() + '">返回首页,重新开始</a></div>';
+    document.getElementById("caption").style.display = "none";
+    document.getElementById("progress").style.display = "none";
+    document.getElementById("run-controls").style.display = "none";
+  });
+
+  document.getElementById("pause-btn").addEventListener("click", () => {
+    fetch("/api/pause", { method: "POST" })
+      .then((r) => r.json())
+      .then((data) => {
+        document.getElementById("pause-btn").textContent =
+          data.status === "paused" ? "继续" : "暂停";
+      });
+  });
+
+  document.getElementById("stop-btn").addEventListener("click", () => {
+    if (!confirm("确定要停止吗?已经播放/录制的部分会保留。")) return;
+    fetch("/api/stop", { method: "POST" });
+    document.getElementById("stop-btn").disabled = true;
+  });
+
+  document.getElementById("clear-cache-btn").addEventListener("click", () => {
+    if (!confirm("确定要清空吗?这会删除 tts_cache 里所有缓存的语音,以及 output 里所有已经录好的视频,不可恢复。")) return;
+    const statusEl = document.getElementById("clear-cache-status");
+    statusEl.textContent = "正在清理...";
+    fetch("/api/clear", { method: "POST" })
+      .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok) {
+          statusEl.textContent = data.message || "清理失败";
+          return;
+        }
+        statusEl.textContent =
+          `已清空:语音缓存 ${data.tts_cache_removed} 项,视频 ${data.output_removed} 项`;
+      })
+      .catch(() => {
+        statusEl.textContent = "清理失败,请检查程序是否还在运行";
+      });
+  });
+</script>
+
+</body>
+</html>
